@@ -31,7 +31,11 @@ contract('TapMenu > RestaurantStaff', accounts => {
     );
 
     const membersAfter = await tapMenu.getMembers({ from: owner });
-    expect(membersAfter.valueOf()).to.have.length(1);
+    const members = membersAfter.valueOf();
+    expect(members).to.have.length(1);
+    const [memberInfo] = members;
+    expect(memberInfo.account).to.be.equal(tronWeb.address.toHex(accounts[1]));
+    expect(memberInfo.role.toNumber()).to.be.equal(0x01);
 
     await tapMenu.removeMember(accounts[1], { from: owner });
 

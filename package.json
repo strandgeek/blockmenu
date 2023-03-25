@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/strandgeek/tapmenu#readme",
   "dependencies": {
-    "@openzeppelin/contracts": "^4.8.2"
+    "@openzeppelin/contracts": "^4.8.2",
+    "tronbox": "^3.1.2"
   }
 }
