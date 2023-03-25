@@ -78,12 +78,26 @@ abstract contract RestaurantStaff is Ownable {
   }
 
   /**
-  * @dev Throws if called by any account other than the owner.
+  * @dev Throws if called by any account other than an admin or the owner
   */
-  modifier onlyRoles(uint[] memory roles) {
-      _checkRoles(roles);
-      _;
+  modifier onlyAdmin() {
+    uint[] memory roles = new uint[](1);
+    roles[0] = ADMIN_ROLE;
+    _checkRoles(roles);
+    _;
   }
+
+  /**
+  * @dev Throws if called by any account other than an staff member or the owner
+  */
+  modifier onlyStaff() {
+    uint[] memory roles = new uint[](2);
+    roles[0] = ADMIN_ROLE;
+    roles[1] = WAITER_ROLE;
+    _checkRoles(roles);
+    _;
+  }
+
 
   function _getMembers() internal view returns (MemberInfo[] memory) {
     MemberInfo[] memory memberInfos = new MemberInfo[](_members.length);

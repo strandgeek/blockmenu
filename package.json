@@ -8,7 +8,8 @@
   "scripts": {
     "compile": "tronbox compile",
     "migrate": "tronbox migrate",
-    "test": "tronbox test"
+    "test": "tronbox test",
+    "test:ci": "bash ./scripts/test.sh"
   },
   "repository": {
     "type": "git",
