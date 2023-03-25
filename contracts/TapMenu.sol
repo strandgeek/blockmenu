@@ -2,29 +2,12 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+
+import "./Billable.sol";
 import "./MenuManageable.sol";
 import "./RestaurantStaff.sol";
 
-contract TapMenu is Ownable, MenuManageable, RestaurantStaff {
-  enum BillStatus {
-    UNPAID,
-    PAID,
-    CANCELLED
-  }
-
-  struct Bill {
-    address owner;
-    BillStatus status;
-    int createdAt;
-    string metadataCID;
-    address waiter;
-  }
-
-  struct RoleAssignment {
-    address addr;
-    uint role;
-  }
-
+contract TapMenu is Ownable, MenuManageable, Billable, RestaurantStaff {
   constructor() {}
 
   /**
@@ -48,6 +31,15 @@ contract TapMenu is Ownable, MenuManageable, RestaurantStaff {
   function createMenu(string memory metadataCID, MenuItem[] memory items) public onlyAdmin returns (uint) {
     return _createMenu(metadataCID, items);
   }
+
+  /**
+   * @dev Create a Menu (Only Admins and Contract Owners are allowed)
+   * Returns: The created Menu ID
+   */
+  function createBill(string memory metadataCID) public returns (uint) {
+    return _createBill(metadataCID);
+  }
+
   // Getters
 
   /**
