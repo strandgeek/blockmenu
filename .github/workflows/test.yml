@@ -36,4 +36,4 @@ jobs:
           git config --global url."https://".insteadOf git://
           git config --global url."https://github.com".insteadOf ssh://git@github.com
           npm ci
-    - run: npm test:ci
+    - run: npm run test:ci
