@@ -1,0 +1,26 @@
+{
+  "name": "tapmenu",
+  "version": "0.0.1",
+  "description": "",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "compile": "tronbox compile",
+    "migrate": "tronbox migrate",
+    "test": "tronbox test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/strandgeek/tapmenu.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/strandgeek/tapmenu/issues"
+  },
+  "homepage": "https://github.com/strandgeek/tapmenu#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.8.2"
+  }
+}
