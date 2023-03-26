@@ -33,11 +33,19 @@ contract TapMenu is Ownable, MenuManageable, Billable, RestaurantStaff {
   }
 
   /**
-   * @dev Create a Menu (Only Admins and Contract Owners are allowed)
-   * Returns: The created Menu ID
+   * @dev Create a Bill
+   * Returns: The created Bill ID
    */
   function createBill(string memory metadataCID) public returns (uint) {
     return _createBill(metadataCID);
+  }
+
+  /**
+   * @dev Create a Order for the current bill
+   * Returns: The created Order ID
+   */
+  function createOrder(OrderLine[] memory orderLines) public returns (uint) {
+    return _createOrder(orderLines);
   }
 
   // Getters
@@ -54,5 +62,12 @@ contract TapMenu is Ownable, MenuManageable, Billable, RestaurantStaff {
    */
   function getMenu() public view returns (Menu memory, MenuItem[] memory) {
     return _getMenu();
+  }
+
+  /**
+   * @dev Returns the latest order infos
+   */
+  function getLatestOrderInfos() public view returns (OrderInfo[] memory) {
+    return _getLatestOrderInfos();
   }
 }
