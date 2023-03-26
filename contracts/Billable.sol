@@ -132,4 +132,26 @@ abstract contract Billable is MenuManageable {
     }
     return orderInfos;
   }
+
+  function _getBillOrdersInfo(uint billId) internal view returns (OrderInfo[] memory) {
+    Bill storage bill = _bills[billId];
+    OrderInfo[] memory orderInfos = new OrderInfo[](bill.ordersTotal);
+    for (uint i=0; i<bill.ordersTotal; i++) {
+      orderInfos[i] = _getOrderInfo(_billOrders[bill.id][i].id);
+    }
+    return orderInfos;
+  }
+
+  function _getBillTotalAmount(uint billId) internal view returns (uint) {
+    OrderInfo[] memory orderInfos = _getBillOrdersInfo(billId);
+    uint total = 0;
+    for (uint i=0; i<orderInfos.length; i++) {
+      for (uint j=0; j<orderInfos[i].lines.length; j++) {
+        OrderLine memory line = orderInfos[i].lines[j];
+        uint amount = _menuItems[menuVersion][line.menuItemIdx].amount;
+        total += amount * line.quantity;
+      }
+    }
+    return total;
+  }
 }

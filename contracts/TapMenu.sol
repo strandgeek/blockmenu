@@ -70,4 +70,18 @@ contract TapMenu is Ownable, MenuManageable, Billable, RestaurantStaff {
   function getLatestOrderInfos() public view returns (OrderInfo[] memory) {
     return _getLatestOrderInfos();
   }
+
+  /**
+   * @dev Returns account current bill
+   */
+  function getAccountCurrentBill(address account) public view returns (Bill memory) {
+    return _getAccountCurrentBill(account);
+  }
+
+  /**
+   * @dev Returns the bill total amount of a bill
+   */
+  function getBillTotalAmount(uint billId) public view returns (uint) {
+    return _getBillTotalAmount(billId);
+  }
 }

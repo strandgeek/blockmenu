@@ -88,6 +88,9 @@ contract("TapMenu > Billable", (accounts) => {
       expect(orderInfo.lines[0].quantity.toNumber()).to.be.equal(2);
       expect(orderInfo.lines[1].menuItemIdx.toNumber()).to.be.equal(1);
       expect(orderInfo.lines[1].quantity.toNumber()).to.be.equal(3);
+
+      const billAmountRes = await tapMenu.getBillTotalAmount(orderInfo.bill.id.toNumber());
+      expect(billAmountRes.valueOf().toNumber()).to.be.equal(800);
     });
   });
 });
