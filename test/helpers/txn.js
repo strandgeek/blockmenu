@@ -6,6 +6,7 @@ const expectTxnSuccess = async (txn) => {
   const txnId = await txn;
   const info = await waitForTxnInfo(txnId);
   expect(info.receipt.result).to.be.equal('SUCCESS');
+  return info;
 }
 
 const expectTxnRevert = async (txn) => {

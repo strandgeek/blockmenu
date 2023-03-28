@@ -2,9 +2,9 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 import "./MenuManageable.sol";
-
 
 abstract contract Billable is MenuManageable {
   enum BillStatus {
@@ -27,6 +27,7 @@ abstract contract Billable is MenuManageable {
   struct Bill {
     uint id;
     address owner;
+    address waiter;
     uint menuVersion;
     string metadataCID;
     BillStatus status;
@@ -73,6 +74,7 @@ abstract contract Billable is MenuManageable {
     _bills[id] = Bill({
       id: id,
       owner: msg.sender,
+      waiter: address(0), // Initially the waiter is not assigned
       menuVersion: menuVersion,
       metadataCID: metadataCID,
       status: BillStatus.UNPAID,
@@ -83,6 +85,10 @@ abstract contract Billable is MenuManageable {
     _currentAccountBills[msg.sender] = id;
     lastBillId = id;
     return id;
+  }
+
+  function _checkBillExists(uint billId) internal view {
+    require(_bills[billId].exists, 'bill does not exist');
   }
 
   function _createOrder(OrderLine[] memory orderLines) internal returns (uint) {
@@ -123,7 +129,6 @@ abstract contract Billable is MenuManageable {
     return orderInfo;
   }
 
-
   function _getLatestOrderInfos() internal view returns (OrderInfo[] memory) {
     // TODO: Implement pagination system here
     OrderInfo[] memory orderInfos = new OrderInfo[](lastOrderId);
@@ -134,6 +139,7 @@ abstract contract Billable is MenuManageable {
   }
 
   function _getBillOrdersInfo(uint billId) internal view returns (OrderInfo[] memory) {
+    _checkBillExists(billId);
     Bill storage bill = _bills[billId];
     OrderInfo[] memory orderInfos = new OrderInfo[](bill.ordersTotal);
     for (uint i=0; i<bill.ordersTotal; i++) {
@@ -142,7 +148,14 @@ abstract contract Billable is MenuManageable {
     return orderInfos;
   }
 
+  function _assignWaiterToBill(uint billId, address waiter) internal {
+    _checkBillExists(billId);
+    Bill storage bill = _bills[billId];
+    bill.waiter = waiter;
+  }
+
   function _getBillTotalAmount(uint billId) internal view returns (uint) {
+    _checkBillExists(billId);
     OrderInfo[] memory orderInfos = _getBillOrdersInfo(billId);
     uint total = 0;
     for (uint i=0; i<orderInfos.length; i++) {
@@ -153,5 +166,19 @@ abstract contract Billable is MenuManageable {
       }
     }
     return total;
+  }
+
+  function _payBill(uint billId) internal {
+    _checkBillExists(billId);
+    Bill storage bill = _bills[billId];
+    uint totalAmount = _getBillTotalAmount(billId);
+    require(msg.value >= totalAmount, 'insufficient value');
+    if (bill.waiter != address(0) && msg.value > totalAmount) {
+      // The tip is all the amount that exceeds the bill amount
+      uint tip = msg.value - totalAmount;
+      address payable waiterAcccount = payable(bill.waiter);
+      waiterAcccount.transfer(tip);
+    }
+    bill.status = BillStatus.PAID;
   }
 }

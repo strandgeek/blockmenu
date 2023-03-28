@@ -11,6 +11,11 @@ contract("TapMenu > Billable", (accounts) => {
 
   const owner = accounts[0];
 
+  const expectBillTotalAmount = async (billId, totalAmount) => {
+    const billAmountRes = await tapMenu.getBillTotalAmount(billId);
+    expect(billAmountRes.valueOf().toNumber()).to.be.equal(totalAmount);
+  }
+
   it("should verify that the contract has been deployed by accounts[0]", async function () {
     assert.equal(await tapMenu.owner(), tronWeb.address.toHex(accounts[0]));
   });
@@ -89,8 +94,61 @@ contract("TapMenu > Billable", (accounts) => {
       expect(orderInfo.lines[1].menuItemIdx.toNumber()).to.be.equal(1);
       expect(orderInfo.lines[1].quantity.toNumber()).to.be.equal(3);
 
-      const billAmountRes = await tapMenu.getBillTotalAmount(orderInfo.bill.id.toNumber());
-      expect(billAmountRes.valueOf().toNumber()).to.be.equal(800);
+      await expectBillTotalAmount(orderInfo.bill.id.toNumber(), 800);
     });
   });
+  describe('payBill', () => {
+    const createPayableBill = async (from) => {
+      await tapMenu.createBill("MY_BILL_METADATA_CID", { from });
+      const currentBill = await tapMenu.getAccountCurrentBill(from);
+      await tapMenu.createOrder(
+        [
+          [
+            [0, 2],
+            [1, 3],
+          ],
+        ],
+        {
+          from,
+        }
+      );
+      return currentBill.id.toNumber();
+    }
+    it('with insufficient value', async () => {
+      const billId = await createPayableBill(accounts[8]);
+      await expectBillTotalAmount(billId, 800);
+      await expectTxnRevertWith(
+        tapMenu.payBill(billId, { from: accounts[8], callValue: 700 }),
+        'insufficient value',
+      );
+    });
+    it('with exact value', async () => {
+      const billId = await createPayableBill(accounts[6]);
+      await expectBillTotalAmount(billId, 800);
+      await expectTxnSuccess(
+        tapMenu.payBill(billId, { from: accounts[6], callValue: 800 }),
+      );
+    });
+    it('overpaid (no waiter assigned)', async () => {
+      const billId = await createPayableBill(accounts[6]);
+      await expectBillTotalAmount(billId, 800);
+      await expectTxnSuccess(
+        tapMenu.payBill(billId, { from: accounts[6], callValue: 850 }),
+      );
+    });
+    it('overpaid when waiter is assigned (tips)', async () => {
+      const billId = await createPayableBill(accounts[6]);
+      // Creating Waiter and Assigning to bill
+      const waiter = accounts[7];
+      await tapMenu.addMember(waiter, 0x02, { from: owner });
+      await tapMenu.assignWaiterToBill(billId, waiter, { from: owner });
+      const waiterBalanceBefore = await tronWrap.trx.getBalance(waiter);
+      await expectBillTotalAmount(billId, 800);
+      await expectTxnSuccess(
+        tapMenu.payBill(billId, { from: accounts[6], callValue: 850 }),
+      );
+      const waiterBalanceAfter = await tronWrap.trx.getBalance(waiter);
+      expect(waiterBalanceAfter).to.be.equal(waiterBalanceBefore + 50);
+    });
+  })
 });

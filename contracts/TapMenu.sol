@@ -40,6 +40,22 @@ contract TapMenu is Ownable, MenuManageable, Billable, RestaurantStaff {
     return _createBill(metadataCID);
   }
 
+
+  /**
+   * @dev Assign a Waiter to a Bill (Only the staff is allowed)
+   */
+  function assignWaiterToBill(uint billId, address waiter) public {
+    require(hasRole(waiter, WAITER_ROLE), 'provided account is not a waiter');
+    return _assignWaiterToBill(billId, waiter);
+  }
+
+  /**
+   * @dev Pay a bill. All amount that exceeds the bill total will be transfered to the waiter (if assigned)
+   */
+  function payBill(uint billId) public payable {
+    return _payBill(billId);
+  }
+
   /**
    * @dev Create a Order for the current bill
    * Returns: The created Order ID
