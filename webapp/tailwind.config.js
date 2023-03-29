@@ -7,6 +7,17 @@ export default {
   theme: {
     extend: {},
   },
+  daisyui: {
+    themes: [
+      {
+        light: {
+          ...require("daisyui/src/colors/themes")["[data-theme=light]"],
+          primary: '#ea580c',
+          'text-primary': '#ea580c'
+        },
+      },
+    ],
+  },
   plugins: [require("daisyui")],
 }
 
