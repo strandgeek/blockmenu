@@ -2,6 +2,7 @@ import React, { FC, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { useInterval } from "usehooks-ts";
 import { tronContext, TronWalletStatus } from "../contexts/tron";
+import ContractV1 from '../contracts/v1.json';
 
 export interface TronProviderProps {
   children: React.ReactNode;
@@ -12,6 +13,7 @@ export const TronProvider: FC<TronProviderProps> = ({ children }) => {
   const [installed, setInstalled] = useState(false);
   const [locked, setLocked] = useState(true);
   const [address, setAddress] = useState<string | null>(null);
+  const [contract, setContract] = useState();
 
   const getWalletStatus = () => {
     const installed = !!window.tronWeb;
@@ -29,6 +31,13 @@ export const TronProvider: FC<TronProviderProps> = ({ children }) => {
   useEffect(() => {
     getWalletStatus();
   }, []);
+
+  useEffect(() => {
+    if (address) {
+      const contract = window.tronWeb.contract(ContractV1.abi, 'TM4Sm3eRost77gYA1iYvb457MGSWEude46');
+      setContract(contract);
+    }
+  }, [address]);
 
   useInterval(
     () => {
@@ -61,7 +70,7 @@ export const TronProvider: FC<TronProviderProps> = ({ children }) => {
   };
 
   return (
-    <tronContext.Provider value={{ address, tronWeb: null, status, connect }}>
+    <tronContext.Provider value={{ address, tronWeb: window.tronWeb, status, connect, contract }}>
       {children}
     </tronContext.Provider>
   );

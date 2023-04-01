@@ -58,7 +58,6 @@ abstract contract MenuManageable {
   }
 
   function _getMenu() internal view returns (Menu memory, MenuItem[] memory) {
-    _checkMenuExists();
     Menu memory menu = Menu(
       _menus[menuVersion].metadataCID,
       _menus[menuVersion].itemsTotal,

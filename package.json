@@ -6,7 +6,7 @@
     "test": "test"
   },
   "scripts": {
-    "compile": "tronbox compile",
+    "compile": "tronbox compile && node ./scripts/postCompile.js",
     "migrate": "tronbox migrate",
     "test": "tronbox test",
     "test:ci": "bash ./scripts/test.sh"

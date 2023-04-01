@@ -7,6 +7,7 @@ interface TronContext {
   address: string | null;
   tronWeb: any;
   connect: () => Promise<void>;
+  contract: any;
 }
 
 export const tronContext = createContext<TronContext>({
@@ -14,4 +15,5 @@ export const tronContext = createContext<TronContext>({
   address: null,
   tronWeb: null,
   connect: async () => {},
+  contract: null,
 });

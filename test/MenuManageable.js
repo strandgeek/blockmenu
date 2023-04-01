@@ -27,6 +27,10 @@ contract('BlockMenu > MenuManageable', accounts => {
       ]
     ];
     it('as owner: the menu should be created successfully', async () => {
+      const menuResBefore = await blockMenu.getMenu();
+      const menuBefore = menuResBefore.valueOf();
+      expect(menuBefore[0].metadataCID).to.be.equal('');
+      expect(menuBefore[0].itemsTotal.toNumber()).to.be.equal(0);
       await expectTxnSuccess(blockMenu.createMenu(params, { from: owner }));
       const menuRes = await blockMenu.getMenu();
       const menu = menuRes.valueOf();

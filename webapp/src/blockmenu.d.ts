@@ -5,4 +5,6 @@ declare global {
   }
 }
 
+declare module 'tronweb';
+
 export default global;
