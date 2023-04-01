@@ -36,18 +36,6 @@ export const TronProvider: FC<TronProviderProps> = ({ children }) => {
 
   return (
     <tronContext.Provider value={{ address, tronWeb: null }}>
-      <div>
-        Locked: {locked ? 'true' : 'false'}
-      </div>
-      <div>
-        Installed: {installed ? 'true' : 'false'}
-      </div>
-      <div>
-        Loading: {loading ? 'true' : 'false'}
-      </div>
-      <div>
-        Address: {address}
-      </div>
       <button onClick={connect}>Connect</button>
       {children}
     </tronContext.Provider>
