@@ -2,18 +2,54 @@ import classNames from "classnames";
 import React, { FC, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useStep } from "usehooks-ts";
-import blockMenuSrc from '../assets/logo.svg';
+import blockMenuSrc from "../assets/logo.svg";
+import { ConnectTronWalletButton } from "../components/ConnectTronWalletButton";
+import { useTron } from "../hooks/useTron";
+import ContractV1 from "../contracts/v1.json";
+import { toast } from "react-toastify";
+import { waitFor } from "../utils/waitFor";
+import { waitForTxn } from "../utils/waitForTxn";
+import { confettiAnimate } from "../utils/confettiAnimate";
 
 export interface DeployProps {}
 
 export const Deploy: FC<DeployProps> = (props) => {
+  const { address } = useTron();
   const [currentStep, helpers] = useStep(3);
-  const [templateType, setTemplateType] = useState<'sample' | 'empty'>('sample');
-  const [deployedAddress, setDeployedAddress] = useState('');
+  const [templateType, setTemplateType] = useState<"sample" | "empty">(
+    "sample"
+  );
+  const [deployedAddress, setDeployedAddress] = useState("");
   const deployContract = async () => {
-    alert("Call Contract Deployment Here");
+    const { tronWeb } = window;
+    const transaction = await tronWeb.transactionBuilder.createSmartContract(
+      {
+        abi: ContractV1.abi,
+        bytecode: ContractV1.bytecode,
+        // feeLimit: 1e9,
+        // callValue: 0,
+        // userFeePercentage: 30,
+        // originEnergyLimit: 1e7,
+      },
+      window.tronWeb.defaultAddress.hex
+    );
+
+    try {
+      const signedTransaction = await tronWeb.trx.sign(transaction);
+      const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
+      if (res?.code === 'BANDWITH_ERROR') {
+        toast.error('Insufficient TRX Balance to deploy smart contract');
+        return;
+      }
+      const address = tronWeb.address.fromHex(res.transaction.contract_address);
+      await waitForTxn(res.txid);
+      setDeployedAddress(address);
+      confettiAnimate();
+      helpers.goToNextStep();
+    } catch (error: any) {
+      toast.error(error?.message);
+    }
   };
-  const address = '';
   return (
     <div className="w-screen h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full max-w-xl">
@@ -49,7 +85,7 @@ export const Deploy: FC<DeployProps> = (props) => {
           <div className={classNames({ hidden: currentStep !== 1 })}>
             <div className="w-full p-8">
               <div className="flex items-center justify-center py-4">
-                <button>Add Connect Button Here</button>
+                <ConnectTronWalletButton />
               </div>
             </div>
             <div className="w-full p-4 border-t flex justify-end">
@@ -69,7 +105,7 @@ export const Deploy: FC<DeployProps> = (props) => {
                   <span className="label-text">BlockMenu Version</span>
                 </label>
                 <select className="select select-bordered">
-                  <option selected>V1 (Hack-a-TONx BETA)</option>
+                  <option selected>BETA (HackaTRON Season 4)</option>
                 </select>
               </div>
               <div className="form-control w-full mt-4">

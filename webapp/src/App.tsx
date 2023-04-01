@@ -1,10 +1,10 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Deploy } from "./pages/Deploy";
 import { IndexPage } from "./pages/Index";
 import { TronProvider } from "./providers/TronProvider";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const router = createBrowserRouter([
   {
@@ -17,12 +17,14 @@ const router = createBrowserRouter([
   },
 ]);
 
-
 function App() {
   return (
-    <TronProvider>
-      <RouterProvider router={router} />
-    </TronProvider>
+    <>
+      <ToastContainer />
+      <TronProvider>
+        <RouterProvider router={router} />
+      </TronProvider>
+    </>
   );
 }
 

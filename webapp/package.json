@@ -12,6 +12,7 @@
     "@heroicons/react": "^2.0.16",
     "classnames": "^2.3.2",
     "daisyui": "^2.51.5",
+    "identicon.js": "^2.3.3",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
     "react": "^18.2.0",
@@ -23,6 +24,7 @@
     "vite-plugin-node-polyfills": "^0.7.0"
   },
   "devDependencies": {
+    "@types/identicon.js": "^2.3.1",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^3.1.0",
