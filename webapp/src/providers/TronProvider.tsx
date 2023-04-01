@@ -36,7 +36,6 @@ export const TronProvider: FC<TronProviderProps> = ({ children }) => {
 
   return (
     <tronContext.Provider value={{ address, tronWeb: null }}>
-      <button onClick={connect}>Connect</button>
       {children}
     </tronContext.Provider>
   );
