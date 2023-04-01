@@ -10,9 +10,16 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.0.16",
+    "classnames": "^2.3.2",
     "daisyui": "^2.51.5",
+    "localforage": "^1.10.0",
+    "match-sorter": "^6.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.9.0",
+    "react-toastify": "^9.1.2",
+    "sort-by": "^1.2.0",
+    "usehooks-ts": "^2.9.1",
     "vite-plugin-node-polyfills": "^0.7.0"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
-var TapMenu = artifacts.require("./TapMenu.sol");
+var BlockMenu = artifacts.require("./BlockMenu.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(TapMenu);
+  deployer.deploy(BlockMenu);
 };

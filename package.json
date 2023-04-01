@@ -1,5 +1,5 @@
 {
-  "name": "tapmenu",
+  "name": "blockmenu",
   "version": "0.0.1",
   "description": "",
   "directories": {
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/strandgeek/tapmenu.git"
+    "url": "git+https://github.com/strandgeek/blockmenu.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/strandgeek/tapmenu/issues"
+    "url": "https://github.com/strandgeek/blockmenu/issues"
   },
-  "homepage": "https://github.com/strandgeek/tapmenu#readme",
+  "homepage": "https://github.com/strandgeek/blockmenu#readme",
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.2",
     "tronbox": "^3.1.2"

@@ -7,7 +7,7 @@ import "./Billable.sol";
 import "./MenuManageable.sol";
 import "./RestaurantStaff.sol";
 
-contract TapMenu is Ownable, MenuManageable, Billable, RestaurantStaff {
+contract BlockMenu is Ownable, MenuManageable, Billable, RestaurantStaff {
   constructor() {}
 
   /**

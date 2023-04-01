@@ -1,44 +1,44 @@
 const { expectTxnSuccess, expectTxnRevertWith } = require("./helpers/txn");
 
-const TapMenu = artifacts.require("TapMenu");
+const BlockMenu = artifacts.require("BlockMenu");
 
-contract("TapMenu > Billable", (accounts) => {
-  let tapMenu;
+contract("BlockMenu > Billable", (accounts) => {
+  let blockMenu;
 
   before(async function () {
-    tapMenu = await TapMenu.deployed();
+    blockMenu = await BlockMenu.deployed();
   });
 
   const owner = accounts[0];
 
   const expectBillTotalAmount = async (billId, totalAmount) => {
-    const billAmountRes = await tapMenu.getBillTotalAmount(billId);
+    const billAmountRes = await blockMenu.getBillTotalAmount(billId);
     expect(billAmountRes.valueOf().toNumber()).to.be.equal(totalAmount);
   }
 
   it("should verify that the contract has been deployed by accounts[0]", async function () {
-    assert.equal(await tapMenu.owner(), tronWeb.address.toHex(accounts[0]));
+    assert.equal(await blockMenu.owner(), tronWeb.address.toHex(accounts[0]));
   });
 
   describe("createBill", () => {
     it("should not create the bill when the menu is not ready", async () => {
       await expectTxnRevertWith(
-        tapMenu.createBill("MY_BILL_METADATA_CID", { from: accounts[4] }),
+        blockMenu.createBill("MY_BILL_METADATA_CID", { from: accounts[4] }),
         "menu is not ready"
       );
     });
     it("should create the bill properly", async () => {
       const menuParams = ["MY_METADATA_CID", [[100], [200]]];
-      await expectTxnSuccess(tapMenu.createMenu(menuParams, { from: owner }));
+      await expectTxnSuccess(blockMenu.createMenu(menuParams, { from: owner }));
 
       // Should create successfully the first bill
       await expectTxnSuccess(
-        tapMenu.createBill("MY_BILL_METADATA_CID", { from: accounts[4] })
+        blockMenu.createBill("MY_BILL_METADATA_CID", { from: accounts[4] })
       );
 
       // Should thrown error for second bill since the first bill is still active
       await expectTxnRevertWith(
-        tapMenu.createBill("MY_BILL_METADATA_CID", { from: accounts[4] }),
+        blockMenu.createBill("MY_BILL_METADATA_CID", { from: accounts[4] }),
         "current bill is still active"
       );
     });
@@ -47,10 +47,10 @@ contract("TapMenu > Billable", (accounts) => {
   describe("createOrder", () => {
     it("should throw error if an menuItemIdx does not exist on menu", async () => {
       await expectTxnSuccess(
-        tapMenu.createBill("MY_BILL_METADATA_CID", { from: accounts[5] })
+        blockMenu.createBill("MY_BILL_METADATA_CID", { from: accounts[5] })
       );
       await expectTxnRevertWith(
-        tapMenu.createOrder(
+        blockMenu.createOrder(
           [
             [
               [999, 2],
@@ -67,7 +67,7 @@ contract("TapMenu > Billable", (accounts) => {
     it("should create order properly", async () => {
       // Should create successfully the first bill
       await expectTxnSuccess(
-        tapMenu.createOrder(
+        blockMenu.createOrder(
           [
             [
               [0, 2],
@@ -79,7 +79,7 @@ contract("TapMenu > Billable", (accounts) => {
           }
         )
       );
-      const orderInfos = await tapMenu.getLatestOrderInfos({
+      const orderInfos = await blockMenu.getLatestOrderInfos({
         from: accounts[5],
       });
       expect(orderInfos).to.have.length(1);
@@ -99,9 +99,9 @@ contract("TapMenu > Billable", (accounts) => {
   });
   describe('payBill', () => {
     const createPayableBill = async (from) => {
-      await tapMenu.createBill("MY_BILL_METADATA_CID", { from });
-      const currentBill = await tapMenu.getAccountCurrentBill(from);
-      await tapMenu.createOrder(
+      await blockMenu.createBill("MY_BILL_METADATA_CID", { from });
+      const currentBill = await blockMenu.getAccountCurrentBill(from);
+      await blockMenu.createOrder(
         [
           [
             [0, 2],
@@ -118,7 +118,7 @@ contract("TapMenu > Billable", (accounts) => {
       const billId = await createPayableBill(accounts[8]);
       await expectBillTotalAmount(billId, 800);
       await expectTxnRevertWith(
-        tapMenu.payBill(billId, { from: accounts[8], callValue: 700 }),
+        blockMenu.payBill(billId, { from: accounts[8], callValue: 700 }),
         'insufficient value',
       );
     });
@@ -126,26 +126,26 @@ contract("TapMenu > Billable", (accounts) => {
       const billId = await createPayableBill(accounts[6]);
       await expectBillTotalAmount(billId, 800);
       await expectTxnSuccess(
-        tapMenu.payBill(billId, { from: accounts[6], callValue: 800 }),
+        blockMenu.payBill(billId, { from: accounts[6], callValue: 800 }),
       );
     });
     it('overpaid (no waiter assigned)', async () => {
       const billId = await createPayableBill(accounts[6]);
       await expectBillTotalAmount(billId, 800);
       await expectTxnSuccess(
-        tapMenu.payBill(billId, { from: accounts[6], callValue: 850 }),
+        blockMenu.payBill(billId, { from: accounts[6], callValue: 850 }),
       );
     });
     it('overpaid when waiter is assigned (tips)', async () => {
       const billId = await createPayableBill(accounts[6]);
       // Creating Waiter and Assigning to bill
       const waiter = accounts[7];
-      await tapMenu.addMember(waiter, 0x02, { from: owner });
-      await tapMenu.assignWaiterToBill(billId, waiter, { from: owner });
+      await blockMenu.addMember(waiter, 0x02, { from: owner });
+      await blockMenu.assignWaiterToBill(billId, waiter, { from: owner });
       const waiterBalanceBefore = await tronWrap.trx.getBalance(waiter);
       await expectBillTotalAmount(billId, 800);
       await expectTxnSuccess(
-        tapMenu.payBill(billId, { from: accounts[6], callValue: 850 }),
+        blockMenu.payBill(billId, { from: accounts[6], callValue: 850 }),
       );
       const waiterBalanceAfter = await tronWrap.trx.getBalance(waiter);
       expect(waiterBalanceAfter).to.be.equal(waiterBalanceBefore + 50);
