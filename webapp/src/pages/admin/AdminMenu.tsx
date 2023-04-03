@@ -2,6 +2,7 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Bars3Icon } from "@heroicons/react/24/solid";
 import React, { FC, useEffect, useState } from "react";
 import { useMetadataInfo } from "../../client/queries";
+import { useSetMetadataInfoMutation } from '../../client/mutations';
 import {
   AddEditMenuItemModal,
   AddEditMenuItemModalProps,
@@ -13,11 +14,13 @@ import {
   Metadata,
 } from "../../lib/metadata";
 import { getCidUrl } from "../../lib/web3storage";
+import classNames from "classnames";
 
 export interface AdminMenuProps {}
 
 export const AdminMenu: FC<AdminMenuProps> = () => {
   const { data: metadataInfoData } = useMetadataInfo();
+  const mutation = useSetMetadataInfoMutation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [currentCategoryIdx, setCurrentCategoryIdx] = useState<number>();
   const [currentItemIdx, setCurrentItemIdx] = useState<number>();
@@ -51,7 +54,7 @@ export const AdminMenu: FC<AdminMenuProps> = () => {
       return;
     }
     const item: MenuItem = {
-      id: Math.floor(Math.random() * (1000000 - 0 + 1)) + 0,
+      id: -1, // MenuItem id is based on idx and it's filled before save
       name: data.name,
       price: data.price,
       imageCID: data.imageCID,
@@ -90,6 +93,14 @@ export const AdminMenu: FC<AdminMenuProps> = () => {
     setAddEditModalOpen(true);
   };
   const onSaveMenuClick = async () => {
+    // Set the Item ID properly
+    let itemIdx = 0;
+    categories.forEach(category => {
+      category.items.forEach(item => {
+        item.id = itemIdx;
+        itemIdx++;
+      });
+    })
     // TODO: Update current smart contract metadata
     const metadata: Metadata = {
       name: "Custom Restaurant Name",
@@ -98,6 +109,8 @@ export const AdminMenu: FC<AdminMenuProps> = () => {
         categories,
       },
     };
+    const res = await mutation.mutateAsync(metadata)
+    console.log(res);
     // const res = await mutation.mutateAsync(metadata);
     // console.log({ res });
   };
@@ -207,7 +220,7 @@ export const AdminMenu: FC<AdminMenuProps> = () => {
         </div>
 
         <div className="flex justify-end mt-8 pt-8 border-t">
-          <button className="btn btn-primary" onClick={onSaveMenuClick}>
+          <button className={classNames("btn btn-primary", { loading: mutation.isLoading })} onClick={onSaveMenuClick}>
             Save Menu
           </button>
         </div>
