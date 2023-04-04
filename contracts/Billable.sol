@@ -98,7 +98,6 @@ abstract contract Billable is MenuManageable {
     if (!currentBill.exists || currentBill.status != BillStatus.UNPAID) {
       revert('no active bill');
     }
-
     uint orderIdx = currentBill.ordersTotal;
     _billOrders[currentBillId][orderIdx] = Order({
       id: id,

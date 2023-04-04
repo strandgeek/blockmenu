@@ -8,6 +8,10 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AdminBills } from "./pages/admin/AdminBills";
 import { AdminMenu } from "./pages/admin/AdminMenu";
+import { AppHomePage } from "./pages/app/Home";
+import { OrderProvider } from "./providers/OrderProvider";
+import { AppOrdersPage } from "./pages/app/Orders";
+import { AppStart } from "./pages/app/Start";
 
 const router = createBrowserRouter([
   {
@@ -25,7 +29,19 @@ const router = createBrowserRouter([
   {
     path: '/admin/bills',
     element: <AdminBills />
-  }
+  },
+  {
+    path: '/app',
+    element: <AppHomePage />
+  },
+  {
+    path: '/app/start',
+    element: <AppStart />
+  },
+  {
+    path: '/app/order',
+    element: <AppOrdersPage />
+  },
 ]);
 
  // Create a client
@@ -34,12 +50,14 @@ const router = createBrowserRouter([
 function App() {
   return (
     <>
+    <OrderProvider>
       <QueryClientProvider client={queryClient}>
         <ToastContainer />
         <TronProvider>
           <RouterProvider router={router} />
         </TronProvider>
       </QueryClientProvider>
+    </OrderProvider>
     </>
   );
 }
