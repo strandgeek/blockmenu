@@ -26,7 +26,7 @@ export const Deploy: FC<DeployProps> = (props) => {
       {
         abi: ContractV1.abi,
         bytecode: ContractV1.bytecode,
-        feeLimit: 1e9,
+        feeLimit: 1e10,
         callValue: 0,
         userFeePercentage: 30,
         originEnergyLimit: 1e7,

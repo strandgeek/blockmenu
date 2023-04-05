@@ -55,6 +55,35 @@ export const getCurrentBill = (c?: any, address?: string | null) => async (): Pr
   }
 }
 
+export const getBillOrdersInfo = (c?: any, billId?: number) => async (): Promise<any> => {
+  try {
+    console.log({ billId });
+    if (!billId) {
+      return [];
+    }
+    const ordersInfo = await c.getBillOrdersInfo(billId).call();
+    console.log({ ordersInfo });
+    // TODO: Parse and create a type for OrdersInfo here
+    return ordersInfo;
+  } catch (error: any) {
+    console.log(error);
+    return null;
+  }
+}
+
+export const getBillTotalAmount = (c?: any, billId?: number) => async (): Promise<number | null> => {
+  try {
+    if (!billId) {
+      return null;
+    }
+    const totalAmount = await c.getBillTotalAmount(billId).call();
+    return totalAmount?.toNumber() || null;
+  } catch (error: any) {
+    console.log(error);
+    return null;
+  }
+}
+
 
 // Hooks
 
@@ -66,4 +95,14 @@ export const useMetadataInfo = () => {
 export const useCurrentBill = () => {
   const { contract, address } = useTron();
   return useQuery('currentBill', getCurrentBill(contract, address), { enabled: !!contract, staleTime: 10 * (60 * 1000) });
+}
+
+export const useOrdersInfos = ({ billId }: { billId?: number }) => {
+  const { contract } = useTron();
+  return useQuery(['ordersInfo', billId], getBillOrdersInfo(contract, billId), { enabled: typeof billId !== undefined && !!contract, staleTime: 10 * (60 * 1000) });
+}
+
+export const useBillTotalAmount = ({ billId }: { billId?: number }) => {
+  const { contract } = useTron();
+  return useQuery(['billTotalAmount', billId], getBillTotalAmount(contract, billId), { enabled: typeof billId !== undefined && !!contract, staleTime: 10 * (60 * 1000) });
 }

@@ -34,7 +34,7 @@ export const TronProvider: FC<TronProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (address) {
-      const contract = window.tronWeb.contract(ContractV1.abi, 'TM4Sm3eRost77gYA1iYvb457MGSWEude46');
+      const contract = window.tronWeb.contract(ContractV1.abi, 'TTYRW5q6m1VRZX89f7SemYvUXZmVAfupbL');
       setContract(contract);
     }
   }, [address]);

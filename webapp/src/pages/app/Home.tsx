@@ -6,6 +6,7 @@ import { Category, MenuItem } from '../../lib/metadata';
 import { getCidUrl } from '../../lib/web3storage';
 import { useNavigate } from 'react-router-dom';
 import { ItemView } from '../../components/app/ItemView';
+import { ConnectTronWalletButton } from '../../components/ConnectTronWalletButton';
 
 export interface AppHomePageProps {}
 
@@ -17,13 +18,14 @@ export const AppHomePage: FC<AppHomePageProps> = (props) => {
     const categories: Category[] = metadataInfo?.metadata?.menu?.categories || [];
     const onMenuItemClick = (item: MenuItem) => {
       if (!bill) {
-        navigate('/app/get-started');
+        navigate('/app/start');
         return;
       }
       setCurrentViweingItem(item);
     }
     return (
         <AppMainLayout>
+            <ConnectTronWalletButton />
             <ItemView item={currentViewingItem} onClose={() => setCurrentViweingItem(null)} />
             <ul className="menu bg-base-100 w-full p-2 rounded-box">
                 {categories.map((category: Category) => (

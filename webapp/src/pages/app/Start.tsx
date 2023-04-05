@@ -27,8 +27,8 @@ export const AppStart: FC<AppStartProps> = (props) => {
   };
   useEffect(() => {
     async function refetch() {
-      const billRes = await refetchBill();
-      if (billRes.data) {
+      const bill = await refetchBill();
+      if (bill.data && bill.data.status === 0) {
         navigate("/app");
       }
     }

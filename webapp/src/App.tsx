@@ -12,6 +12,7 @@ import { AppHomePage } from "./pages/app/Home";
 import { OrderProvider } from "./providers/OrderProvider";
 import { AppOrdersPage } from "./pages/app/Orders";
 import { AppStart } from "./pages/app/Start";
+import { AppBillPage } from "./pages/app/Bill";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
   {
     path: '/app/order',
     element: <AppOrdersPage />
+  },
+  {
+    path: '/app/bill',
+    element: <AppBillPage />
   },
 ]);
 

@@ -44,7 +44,7 @@ contract BlockMenu is Ownable, MenuManageable, Billable, RestaurantStaff {
   /**
    * @dev Assign a Waiter to a Bill (Only the staff is allowed)
    */
-  function assignWaiterToBill(uint billId, address waiter) public {
+  function assignWaiterToBill(uint billId, address waiter) public onlyStaff {
     require(hasRole(waiter, WAITER_ROLE), 'provided account is not a waiter');
     return _assignWaiterToBill(billId, waiter);
   }
@@ -99,5 +99,19 @@ contract BlockMenu is Ownable, MenuManageable, Billable, RestaurantStaff {
    */
   function getBillTotalAmount(uint billId) public view returns (uint) {
     return _getBillTotalAmount(billId);
+  }
+
+  /**
+   * @dev Returns the bill orders info
+   */
+  function getBillOrdersInfo(uint billId) public view returns (OrderInfo[] memory) {
+    return _getBillOrdersInfo(billId);
+  }
+
+  /**
+   * @dev Returns the order info by id
+   */
+  function getOrderInfo(uint orderId) public view returns (OrderInfo memory) {
+    return _getOrderInfo(orderId);
   }
 }

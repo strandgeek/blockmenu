@@ -6,6 +6,17 @@ import { waitForTxn } from "../utils/waitForTxn";
 import { getMetadataInfo } from "./queries";
 import { OrderItem } from "../providers/OrderProvider";
 
+// Helpers
+
+const getCurrentBill = async (c?: any, address?: string | null): Promise<any> => {
+  try {
+    const bill = await c.getAccountCurrentBill(address).call();
+    return bill;
+  } catch (error) {};
+  return null;
+}
+
+
 // Functions
 
 export const setMetadataInfo = (c?: any) => async (metadata: Metadata): Promise<{ cid: string | null, metadata: Metadata }> => {
@@ -56,27 +67,27 @@ export const createOrder = (c?: any, address?: string | null) => async (orderIte
 }
 
 export const createBill = (c?: any, address?: string | null) => async (metadata: BillMetadata): Promise<boolean> => {
-  const getBill = async () => {
-    try {
-      const bill = await c.getAccountCurrentBill(address).call();
-      return bill;
-    } catch (error) {
-      console.log(error);
-    };
-    return 0;
-  }
   // Fetching the billOrders so we can use it as stop condition on waitFor
-  const currentBill = await getBill();
   try {
+    const currentBill = await getCurrentBill(c, address);
     const cid = await generateBillMetadataCID(metadata)
     await c.createBill(cid).send();
-    await waitFor(getBill, (bill) => bill.id != currentBill.id);
+    await waitFor(() => getCurrentBill(c, address), (bill) => bill.id != currentBill.id);
   } catch (error) {
     throw error;
   }
   return true;
 }
 
+export const payBill = (c?: any, address?: string | null) => async (billId: number, value: number | bigint): Promise<boolean> => {
+  try {
+    await c.payBill(billId).send({ callValue: value });
+    await waitFor(() => getCurrentBill(c, address), (bill) => bill.status === 1);
+  } catch (error) {
+    throw error;
+  }
+  return true;
+}
 
 
 // Hooks
@@ -104,6 +115,15 @@ export const useCreateOrderMutation = () => {
   return useMutation({
     mutationFn: ({ orderItems }: { orderItems: OrderItem[] }) => {
       return createOrder(contract, address)(orderItems)
+    },
+  })
+}
+
+export const usePayBill = () => {
+  const { contract, address } = useTron()
+  return useMutation({
+    mutationFn: ({ billId, value }: { billId: number, value: number }) => {
+      return payBill(contract, address)(billId, value)
     },
   })
 }
