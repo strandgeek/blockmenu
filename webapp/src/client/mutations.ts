@@ -3,7 +3,6 @@ import { useTron } from "../hooks/useTron";
 import { BillMetadata, Metadata, generateBillMetadataCID, generateMetadataCID } from "../lib/metadata";
 import { waitFor } from "../utils/waitFor";
 import { waitForTxn } from "../utils/waitForTxn";
-import { getMetadataInfo } from "./queries";
 import { OrderItem } from "../providers/OrderProvider";
 
 // Helpers
@@ -33,7 +32,7 @@ export const setMetadataInfo = (c?: any) => async (metadata: Metadata): Promise<
   });
 
   await c.createMenu(cid, items).send();
-  await waitFor(() => getMetadataInfo(c)(), (m) => m.cid === cid);
+  // await waitFor(() => getMetadataInfo(c)(), (m) => m.cid === cid);
   return {
     cid,
     metadata,

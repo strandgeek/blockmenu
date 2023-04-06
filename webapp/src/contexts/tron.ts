@@ -1,4 +1,5 @@
 import { createContext } from "react";
+import { BlockMenuWrapper } from "../wrapper/BlockMenuWrapper";
 
 export type TronWalletStatus = 'LOADING' | 'NOT_INSTALLED' | 'LOCKED' | 'READY' | 'CONNECTED';
 
@@ -8,6 +9,7 @@ interface TronContext {
   tronWeb: any;
   connect: () => Promise<void>;
   contract: any;
+  wrapper: BlockMenuWrapper | null;
 }
 
 export const tronContext = createContext<TronContext>({
@@ -16,4 +18,5 @@ export const tronContext = createContext<TronContext>({
   tronWeb: null,
   connect: async () => {},
   contract: null,
+  wrapper: null,
 });

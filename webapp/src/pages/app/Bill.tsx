@@ -33,17 +33,17 @@ export const AppBillPage: FC<AppBillPageProps> = (props) => {
   const { mutateAsync, isLoading } = usePayBill();
   const totalWithTips =
     tipPercent && billTotal
-      ? billTotal + (billTotal * tipPercent) / 100
+      ? billTotal + (billTotal * BigInt(tipPercent)) / 100n
       : billTotal;
   const hasWaiterAssigned =
-    bill?.address &&
-    bill.address !== "410000000000000000000000000000000000000000";
+    bill?.waiter &&
+    bill.waiter !== "410000000000000000000000000000000000000000";
   const onSubmit = async () => {
     if (!bill || !totalWithTips) {
       return;
     }
     await mutateAsync({
-      billId: bill?.id,
+      billId: bill.id,
       value: totalWithTips,
     });
     setBillPaid(true);
@@ -145,7 +145,7 @@ export const AppBillPage: FC<AppBillPageProps> = (props) => {
           <div className="mt-4 mb-4">
             <div className="flex items-center justify-end">
               <span className="font-bold mr-2">TOTAL:</span>
-              {totalWithTips}
+              {Number(totalWithTips || 0)}
             </div>
           </div>
           {!isPaid ? (
@@ -154,7 +154,7 @@ export const AppBillPage: FC<AppBillPageProps> = (props) => {
                 className={classNames("btn btn-primary btn-block", {
                   loading: isLoading,
                 })}
-                disabled={billTotal === 0}
+                disabled={billTotal === 0n}
                 onClick={onSubmit}
               >
                 {isLoading ? "Paying bill..." : "Pay Bill"}
