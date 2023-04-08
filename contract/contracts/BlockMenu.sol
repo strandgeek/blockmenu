@@ -17,7 +17,7 @@ contract BlockMenu is Ownable, MenuManageable, Billable, RestaurantStaff {
   /**
    * @dev Withdraw the contract balance (Only Contract Owner is allowed)
    */
-  function withdraw(address payable toAccount, uint value) public payable onlyOwner {
+  function withdraw(address payable toAccount, uint value) public onlyOwner {
     require(toAccount != address(0), 'could not withdraw to zero address');
     require(value > 0, 'value is zero');
     require(address(this).balance >= value, 'insufficient funds');
