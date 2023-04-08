@@ -1,21 +1,22 @@
-import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
-import React, { FC } from "react";
-import { useTron } from "../hooks/useTron";
+import { FC } from "react";
 import { getIdenticonSrc } from "../utils/getIdenticonSrc";
 import { getShortAddress } from "../utils/getShortAddress";
-import { TronIcon } from "./TronIcon";
+import { useAccount, useConnect } from "wagmi";
+import { metaMaskConnector } from "../lib/wagmi";
 
-export interface ConnectTronWalletButtonProps {}
+export interface ConnectWalletButtonProps {}
 
-export const ConnectTronWalletButton: FC<ConnectTronWalletButtonProps> = (
+export const ConnectWalletButton: FC<ConnectWalletButtonProps> = (
   props
 ) => {
-  const { connected, connect, address } = useTron();
+  const { isConnected, address } = useAccount();
+  const { connect } = useConnect({
+    connector: metaMaskConnector,
+  });
   return (
     <>
-      {!connected ? (
+      {!isConnected ? (
         <button className="btn btn-primary" onClick={() => connect()}>
-          <TronIcon className="h-5 w-5 mr-2" />
           Connect Wallet
         </button>
       ): (

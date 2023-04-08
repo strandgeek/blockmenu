@@ -1,16 +1,16 @@
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useCreateBillMutation } from "../../client/mutations";
-import { useMetadataInfo, useCurrentBill } from "../../client/queries";
+import { useCurrentBill } from "../../client/queries";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
-import { useTron } from "../../hooks/useTron";
+import { useAccount } from "wagmi";
 
 export interface AppStartProps {}
 
 export const AppStart: FC<AppStartProps> = (props) => {
   const navigate = useNavigate();
-  const { address } = useTron();
+  const { address } = useAccount();
 //   const { data: metadataInfo } = useMetadataInfo();
   const { mutateAsync, isLoading } = useCreateBillMutation();
   const { data: bill, refetch: refetchBill } = useCurrentBill();
@@ -72,7 +72,7 @@ export const AppStart: FC<AppStartProps> = (props) => {
           ) : (
             <div className="w-full text-center">
               <h2 className="mb-4 text-lg">Welcome</h2>
-              <div>Before continue, connect your TRON wallet</div>
+              <div>Before continue, connect your Metamask wallet</div>
               <div className="flex items-center justify-center mt-8"></div>
               <div className="w-full flex items-center justify-center">
                 TODO: Connect Wallet Button Here

@@ -19,7 +19,7 @@ import {
 import classNames from "classnames";
 import { getIdenticonSrc } from "../utils/getIdenticonSrc";
 import LogoSrc from "../assets/logo.svg";
-import { useTron } from "../hooks/useTron";
+import { useAccount } from "wagmi";
 
 export interface AdminMainLayoutProps {
   title: string;
@@ -32,7 +32,7 @@ export const AdminMainLayout: FC<AdminMainLayoutProps> = ({
   actions,
   children,
 }) => {
-  const { address } = useTron();
+  const { address } = useAccount();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
 
@@ -248,7 +248,7 @@ export const AdminMainLayout: FC<AdminMainLayoutProps> = ({
                                 "block px-4 py-2 text-sm"
                               )}
                             >
-                              View on TronScan
+                              View on Explorer
                             </a>
                           )}
                         </Menu.Item>

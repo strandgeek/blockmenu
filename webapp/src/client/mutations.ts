@@ -1,54 +1,82 @@
 import { useMutation } from "react-query";
-import { useTron } from "../hooks/useTron";
-import { BillMetadata, Metadata } from "../lib/metadata";
+import { BillMetadata, Metadata, generateBillMetadataCID, generateMetadataCID } from "../lib/metadata";
 import { OrderItem } from "../providers/OrderProvider";
+import { useContract } from "../hooks/useContract";
+import { useSigner } from "wagmi";
+import { CreateMenuRequest } from "../types/BlockMenuContract";
+import { BigNumber, BigNumberish } from "ethers";
 
 // Hooks
 
 export const useSetMetadataInfoMutation = () => {
-  const { wrapper } = useTron()
+  const { data: signer } = useSigner();
+  const contract = useContract();
   return useMutation({
-    mutationFn: (metadata: Metadata) => {
-      if (!wrapper) {
+    mutationFn: async (metadata: Metadata) => {
+      if (!contract.provider || !signer) {
         throw new Error('Wallet not connected');
       }
-      return wrapper.setMetadataInfo(metadata)
+      // Configure Menu for On-Chain data
+      let idx = 0;
+      const items: CreateMenuRequest[] = [];
+      metadata.menu.categories.forEach(c => {
+        c.items.forEach(i => {
+          items.push({ amount: i.price });
+          idx++;
+        })
+      });
+      const cid = await generateMetadataCID(metadata);
+      const res = await contract.createMenu(cid, items);
+      await res.wait();
+      return metadata;
     },
   })
 }
 
 export const useCreateBillMutation = () => {
-  const { wrapper } = useTron()
+  const { data: signer } = useSigner();
+  const contract = useContract();
   return useMutation({
-    mutationFn: (metadata: BillMetadata) => {
-      if (!wrapper) {
+    mutationFn: async (metadata: BillMetadata) => {
+      if (!contract.provider || !signer) {
         throw new Error('Wallet not connected');
       }
-      return wrapper.createBill(metadata)
+      const cid = await generateBillMetadataCID(metadata);
+      const res = await contract.createBill(cid);
+      await res.wait();
+      return metadata;
     },
   })
 }
 
 export const useCreateOrderMutation = () => {
-  const { wrapper } = useTron()
+  const { data: signer } = useSigner();
+  const contract = useContract();
   return useMutation({
-    mutationFn: ({ orderItems }: { orderItems: OrderItem[] }) => {
-      if (!wrapper) {
+    mutationFn: async ({ orderItems }: { orderItems: OrderItem[] }) => {
+      if (!contract.provider || !signer) {
         throw new Error('Wallet not connected');
       }
-      return wrapper.createOrder(orderItems);
+      const res = await contract.createOrder(orderItems.map(oi => ({ menuItemIdx: oi.item.id, quantity: oi.quantity })))
+      await res.wait();
+      return true;
     },
-  })
+  });
 }
 
 export const usePayBill = () => {
-  const { wrapper } = useTron()
+  const { data: signer } = useSigner();
+  const contract = useContract();
   return useMutation({
-    mutationFn: ({ billId, value }: { billId: bigint, value: bigint }) => {
-      if (!wrapper) {
+    mutationFn: async ({ billId, value }: { billId: BigNumberish, value: BigNumber }) => {
+      if (!contract.provider || !signer) {
         throw new Error('Wallet not connected');
       }
-      return wrapper.payBill(billId, value)
+      const res = await contract.payBill(billId, {
+        value,
+      })
+      await res.wait();
+      return true;
     },
-  })
+  });
 }

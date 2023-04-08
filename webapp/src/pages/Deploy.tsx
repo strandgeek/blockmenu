@@ -1,54 +1,40 @@
 import classNames from "classnames";
-import React, { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { Link } from "react-router-dom";
 import { useStep } from "usehooks-ts";
 import blockMenuSrc from "../assets/logo.svg";
-import { ConnectTronWalletButton } from "../components/ConnectTronWalletButton";
-import { useTron } from "../hooks/useTron";
+import { ConnectWalletButton } from "../components/ConnectWalletButton";
 import ContractV1 from "../contracts/v1.json";
-import { toast } from "react-toastify";
-import { waitFor } from "../utils/waitFor";
-import { waitForTxn } from "../utils/waitForTxn";
 import { confettiAnimate } from "../utils/confettiAnimate";
+import { useAccount, useSigner } from "wagmi";
+import { ethers } from "ethers";
 
 export interface DeployProps {}
 
 export const Deploy: FC<DeployProps> = (props) => {
-  const { address } = useTron();
+  const [loading, setLoading] = useState(false);
+  const { data: signer } = useSigner();
+  const { address, isConnected } = useAccount()
   const [currentStep, helpers] = useStep(3);
   const [templateType, setTemplateType] = useState<"sample" | "empty">(
     "sample"
   );
   const [deployedAddress, setDeployedAddress] = useState("");
-  const deployContract = async () => {
-    const { tronWeb } = window;
-    const transaction = await tronWeb.transactionBuilder.createSmartContract(
-      {
-        abi: ContractV1.abi,
-        bytecode: ContractV1.bytecode,
-        feeLimit: 1e10,
-        callValue: 0,
-        userFeePercentage: 30,
-        originEnergyLimit: 1e7,
-      },
-      window.tronWeb.defaultAddress.hex
-    );
 
-    try {
-      const signedTransaction = await tronWeb.trx.sign(transaction);
-      const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
-      if (res?.code === 'BANDWITH_ERROR') {
-        toast.error('Insufficient TRX Balance to deploy smart contract');
-        return;
-      }
-      const address = tronWeb.address.fromHex(res.transaction.contract_address);
-      await waitForTxn(res.txid);
-      setDeployedAddress(address);
-      confettiAnimate();
-      helpers.goToNextStep();
-    } catch (error: any) {
-      toast.error(error?.message);
+  const deployContract = async () => {
+    if (!signer) {
+      alert('No Signer!');
+      return;
     }
+    setLoading(true);
+    const factory = new ethers.ContractFactory(ContractV1.abi, ContractV1.bytecode, signer);
+    const contract = await factory.deploy();
+    // Wait for 1 contract confirmation
+    await contract.deployTransaction.wait(1);
+    confettiAnimate();
+    setDeployedAddress(contract.address);
+    helpers.goToNextStep();
+    setLoading(false);
   };
   return (
     <div className="w-screen h-screen flex items-center justify-center bg-gray-50">
@@ -85,12 +71,12 @@ export const Deploy: FC<DeployProps> = (props) => {
           <div className={classNames({ hidden: currentStep !== 1 })}>
             <div className="w-full p-8">
               <div className="flex items-center justify-center py-4">
-                <ConnectTronWalletButton />
+                <ConnectWalletButton />
               </div>
             </div>
             <div className="w-full p-4 border-t flex justify-end">
               <button
-                disabled={address === ""}
+                disabled={!address}
                 className="btn btn-primary"
                 onClick={() => helpers.goToNextStep()}
               >
@@ -127,18 +113,20 @@ export const Deploy: FC<DeployProps> = (props) => {
             </div>
             <div className="w-full p-4 border-t flex justify-between">
               <button
-                disabled={address === ""}
+                disabled={!address}
                 className="btn btn-ghost"
                 onClick={() => helpers.goToPrevStep()}
               >
                 Back
               </button>
               <button
-                disabled={address === ""}
-                className="btn btn-primary"
+                disabled={!address}
+                className={classNames("btn btn-primary", {
+                  loading,
+                })}
                 onClick={() => deployContract()}
               >
-                Deploy Contract
+                {loading ? 'Confirming...' : 'Deploy Contract'}
               </button>
             </div>
           </div>

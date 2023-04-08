@@ -6,7 +6,7 @@ import { Category, MenuItem } from '../../lib/metadata';
 import { getCidUrl } from '../../lib/web3storage';
 import { useNavigate } from 'react-router-dom';
 import { ItemView } from '../../components/app/ItemView';
-import { ConnectTronWalletButton } from '../../components/ConnectTronWalletButton';
+import { ConnectWalletButton } from '../../components/ConnectWalletButton';
 
 export interface AppHomePageProps {}
 
@@ -25,7 +25,7 @@ export const AppHomePage: FC<AppHomePageProps> = (props) => {
     }
     return (
         <AppMainLayout>
-            <ConnectTronWalletButton />
+            <ConnectWalletButton />
             <ItemView item={currentViewingItem} onClose={() => setCurrentViweingItem(null)} />
             <ul className="menu bg-base-100 w-full p-2 rounded-box">
                 {categories.map((category: Category) => (

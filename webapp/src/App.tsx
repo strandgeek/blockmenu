@@ -1,10 +1,10 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Deploy } from "./pages/Deploy";
 import { IndexPage } from "./pages/Index";
-import { TronProvider } from "./providers/TronProvider";
-import { QueryClient, QueryClientProvider } from 'react-query';
-
+import { QueryClient, QueryClientProvider } from "react-query";
+import { publicProvider } from "wagmi/providers/public";
 import { ToastContainer, toast } from "react-toastify";
+import { configureChains, createClient, WagmiConfig } from "wagmi";
 import "react-toastify/dist/ReactToastify.css";
 import { AdminBills } from "./pages/admin/AdminBills";
 import { AdminMenu } from "./pages/admin/AdminMenu";
@@ -13,6 +13,7 @@ import { OrderProvider } from "./providers/OrderProvider";
 import { AppOrdersPage } from "./pages/app/Orders";
 import { AppStart } from "./pages/app/Start";
 import { AppBillPage } from "./pages/app/Bill";
+import { chains, metaMaskConnector } from "./lib/wagmi";
 
 const router = createBrowserRouter([
   {
@@ -24,45 +25,54 @@ const router = createBrowserRouter([
     element: <Deploy />,
   },
   {
-    path: '/admin/menu',
-    element: <AdminMenu />
+    path: "/admin/menu",
+    element: <AdminMenu />,
   },
   {
-    path: '/admin/bills',
-    element: <AdminBills />
+    path: "/admin/bills",
+    element: <AdminBills />,
   },
   {
-    path: '/app',
-    element: <AppHomePage />
+    path: "/app",
+    element: <AppHomePage />,
   },
   {
-    path: '/app/start',
-    element: <AppStart />
+    path: "/app/start",
+    element: <AppStart />,
   },
   {
-    path: '/app/order',
-    element: <AppOrdersPage />
+    path: "/app/order",
+    element: <AppOrdersPage />,
   },
   {
-    path: '/app/bill',
-    element: <AppBillPage />
+    path: "/app/bill",
+    element: <AppBillPage />,
   },
 ]);
 
- // Create a client
- const queryClient = new QueryClient()
+// Create a React-Query client
+const queryClient = new QueryClient();
+
+const { provider } = configureChains(chains, [publicProvider()]);
+
+// Create a Wagmi Client (Wallet)
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors: [metaMaskConnector],
+  provider,
+});
 
 function App() {
   return (
     <>
-    <OrderProvider>
-      <QueryClientProvider client={queryClient}>
-        <ToastContainer />
-        <TronProvider>
-          <RouterProvider router={router} />
-        </TronProvider>
-      </QueryClientProvider>
-    </OrderProvider>
+      <WagmiConfig client={wagmiClient}>
+        <OrderProvider>
+          <QueryClientProvider client={queryClient}>
+            <ToastContainer />
+            <RouterProvider router={router} />
+          </QueryClientProvider>
+        </OrderProvider>
+      </WagmiConfig>
     </>
   );
 }

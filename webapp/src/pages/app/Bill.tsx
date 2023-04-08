@@ -16,6 +16,7 @@ import {
 import { SuccessTick } from "../../components/SuccessTick";
 import { AppMainLayout } from "../../layouts/AppMainLayout";
 import { allItemsToMap } from "../../lib/metadata";
+import { BigNumber } from "ethers";
 
 export interface AppBillPageProps {}
 
@@ -31,13 +32,18 @@ export const AppBillPage: FC<AppBillPageProps> = (props) => {
   );
   const [tipPercent, setTipPercent] = useState<number>();
   const { mutateAsync, isLoading } = usePayBill();
-  const totalWithTips =
-    tipPercent && billTotal
-      ? billTotal + (billTotal * BigInt(tipPercent)) / 100n
-      : billTotal;
+  const totalWithTips = useMemo(() => {
+    if (!billTotal) {
+      return 0;
+    }
+    if (!tipPercent) {
+      return billTotal;
+    }
+    return (billTotal?.mul(tipPercent).div(100)).add(billTotal);
+  }, [billTotal, tipPercent]);
   const hasWaiterAssigned =
     bill?.waiter &&
-    bill.waiter !== "410000000000000000000000000000000000000000";
+    bill.waiter !== "0x0000000000000000000000000000000000000000";
   const onSubmit = async () => {
     if (!bill || !totalWithTips) {
       return;
@@ -103,7 +109,7 @@ export const AppBillPage: FC<AppBillPageProps> = (props) => {
                           <th>Price</th>
                         </tr>
                       </thead>
-                      <tbody>{order.lines.map(renderLineItem)}</tbody>
+                      <tbody>{order.lines?.map(renderLineItem)}</tbody>
                     </table>
                   </div>
                 ))}
@@ -154,7 +160,7 @@ export const AppBillPage: FC<AppBillPageProps> = (props) => {
                 className={classNames("btn btn-primary btn-block", {
                   loading: isLoading,
                 })}
-                disabled={billTotal === 0n}
+                disabled={billTotal === BigNumber.from(0)}
                 onClick={onSubmit}
               >
                 {isLoading ? "Paying bill..." : "Pay Bill"}
