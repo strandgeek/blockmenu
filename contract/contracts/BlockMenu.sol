@@ -8,7 +8,21 @@ import "./MenuManageable.sol";
 import "./RestaurantStaff.sol";
 
 contract BlockMenu is Ownable, MenuManageable, Billable, RestaurantStaff {
-  constructor() {}
+  constructor(string memory metadataCID, MenuItem[] memory items) payable {
+    if (bytes(metadataCID).length > 0 && items.length > 0) {
+      _createMenu(metadataCID, items);
+    }
+  }
+
+  /**
+   * @dev Withdraw the contract balance (Only Contract Owner is allowed)
+   */
+  function withdraw(address payable toAccount, uint value) public payable onlyOwner {
+    require(toAccount != address(0), 'could not withdraw to zero address');
+    require(value > 0, 'value is zero');
+    require(address(this).balance >= value, 'insufficient funds');
+    toAccount.transfer(value);
+  }
 
   /**
    * @dev Add a member to the Restaurant Staff (Only Contract Owner is allowed)
@@ -81,10 +95,17 @@ contract BlockMenu is Ownable, MenuManageable, Billable, RestaurantStaff {
   }
 
   /**
-   * @dev Returns the latest order infos
+   * @dev Returns the orders info list
    */
-  function getLatestOrderInfos() public view returns (OrderInfo[] memory) {
-    return _getLatestOrderInfos();
+  function getOrdersInfo(OrderInfoFilter memory filter) public view returns (OrderInfo[] memory) {
+    return _getOrdersInfo(filter);
+  }
+
+  /**
+   * @dev Returns the orders info list
+   */
+  function getBillsInfo(BillInfoFilter memory filter) public view returns (BillInfo[] memory) {
+    return _getBillsInfo(filter);
   }
 
   /**
