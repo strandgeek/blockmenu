@@ -161,3 +161,18 @@ export const useContractBalance = () => {
     return contract!.provider.getBalance(contract!.address);
   }, { enabled: !!contract?.address && !!contract?.provider });
 }
+
+export const useMembers = () => {
+  const { contract } = useWallet();
+  return useQuery(['members', contract?.address], async () => {
+    try {
+      const members = await contract?.getMembers();
+      return members?.map(m => ({
+        account: m.account,
+        role: m.role,
+      }))
+    } catch (error) {
+      throw error;
+    }
+  }, { enabled: !!contract?.address && !!contract?.provider });
+}

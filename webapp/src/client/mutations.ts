@@ -81,7 +81,6 @@ export const usePayBill = () => {
   });
 }
 
-
 export const useWithdraw = () => {
   const { data: signer } = useSigner();
   const { contract } = useWallet();
@@ -91,6 +90,36 @@ export const useWithdraw = () => {
         throw new Error('Wallet not connected');
       }
       const res = await contract.withdraw(toAddress, value);
+      await res.wait();
+      return true;
+    },
+  });
+}
+
+export const useAddMember = () => {
+  const { data: signer } = useSigner();
+  const { contract } = useWallet();
+  return useMutation({
+    mutationFn: async ({ toAddress, role }: { toAddress: string, role: BigNumber }) => {
+      if (!contract?.provider || !signer) {
+        throw new Error('Wallet not connected');
+      }
+      const res = await contract.addMember(toAddress, role);
+      await res.wait();
+      return true;
+    },
+  });
+}
+
+export const useRemoveMember = () => {
+  const { data: signer } = useSigner();
+  const { contract } = useWallet();
+  return useMutation({
+    mutationFn: async ({ toAddress }: { toAddress: string }) => {
+      if (!contract?.provider || !signer) {
+        throw new Error('Wallet not connected');
+      }
+      const res = await contract.removeMember(toAddress);
       await res.wait();
       return true;
     },

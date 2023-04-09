@@ -16,6 +16,7 @@ import { AppBillPage } from "./pages/app/Bill";
 import { chains, metaMaskConnector } from "./lib/wagmi";
 import { AdminOrders } from "./pages/admin/AdminOrders";
 import { WalletProvider } from "./providers/WalletProvider";
+import { AdminUsers } from "./pages/admin/AdminUsers";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
   {
     path: "/admin/bills",
     element: <AdminBills />,
+  },
+  {
+    path: "/admin/users",
+    element: <AdminUsers />,
   },
   {
     path: "/app",
