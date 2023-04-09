@@ -17,6 +17,7 @@ import { chains, metaMaskConnector } from "./lib/wagmi";
 import { AdminOrders } from "./pages/admin/AdminOrders";
 import { WalletProvider } from "./providers/WalletProvider";
 import { AdminUsers } from "./pages/admin/AdminUsers";
+import { AdminConfig } from "./pages/admin/AdminConfig";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
   {
     path: "/admin/users",
     element: <AdminUsers />,
+  },
+  {
+    path: "/admin/config",
+    element: <AdminConfig />,
   },
   {
     path: "/app",

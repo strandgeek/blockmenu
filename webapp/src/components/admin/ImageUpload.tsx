@@ -3,9 +3,10 @@ import { getCidUrl, web3Storage } from '../../lib/web3storage';
 
 export interface ImageUploadProps {
   onChange: (cid: string) => void;
+  imgPreviewClasses?: string;
 }
 
-export const ImageUpload: FC<ImageUploadProps> = ({ onChange }) => {
+export const ImageUpload: FC<ImageUploadProps> = ({ onChange, imgPreviewClasses = 'w-full h-72 object-cover' }) => {
   const [imageCID, setImageCID] = useState<string>();
   const onFileChange: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
     const { files } = e.target;
@@ -21,7 +22,7 @@ export const ImageUpload: FC<ImageUploadProps> = ({ onChange }) => {
     <div>
       {imageCID && (
         <div className="mb-4">
-          <img src={getCidUrl(imageCID)} className="w-full h-72 object-cover" />
+          <img src={getCidUrl(imageCID)} className={imgPreviewClasses} />
         </div>
       )}
       <input className="file-input" type="file" onChange={onFileChange}/>
