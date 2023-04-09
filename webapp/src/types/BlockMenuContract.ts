@@ -68,18 +68,24 @@ export type BlockMenuContractMethodNames =
   | 'createMenu'
   | 'createOrder'
   | 'getAccountCurrentBill'
+  | 'getBillInfo'
   | 'getBillOrdersInfo'
   | 'getBillTotalAmount'
-  | 'getLatestOrderInfos'
+  | 'getBillsInfo'
   | 'getMembers'
   | 'getMenu'
   | 'getOrderInfo'
+  | 'getOrdersInfo'
   | 'hasRole'
   | 'owner'
   | 'payBill'
   | 'removeMember'
   | 'renounceOwnership'
-  | 'transferOwnership';
+  | 'transferOwnership'
+  | 'withdraw';
+export interface undefinedRequest {
+  amount: BigNumberish;
+}
 export interface OwnershipTransferredEventEmittedResponse {
   previousOwner: string;
   newOwner: string;
@@ -113,9 +119,29 @@ export interface BillResponse {
 }
 export interface LinesResponse {
   menuItemIdx: BigNumber;
-  0: LinesResponse[];
+  0: BigNumber;
   quantity: BigNumber;
-  1: LinesResponse[];
+  1: BigNumber;
+}
+export interface OrderInfosResponse {
+  id: BigNumber;
+  0: OrderInfosResponse[];
+  bill: BillResponse;
+  1: OrderInfosResponse[];
+  lines: LinesResponse[];
+  2: OrderInfosResponse[];
+  createdAt: BigNumber;
+  3: OrderInfosResponse[];
+}
+export interface BillinfoResponse {
+  id: BigNumber;
+  0: BigNumber;
+  bill: BillResponse;
+  1: BillResponse;
+  orderInfos: OrderInfosResponse[];
+  2: OrderInfosResponse[];
+  createdAt: BigNumber;
+  3: BigNumber;
 }
 export interface OrderinfoResponse {
   id: BigNumber;
@@ -124,6 +150,12 @@ export interface OrderinfoResponse {
   1: BillResponse;
   lines: LinesResponse[];
   2: LinesResponse[];
+  createdAt: BigNumber;
+  3: BigNumber;
+}
+export interface GetBillsInfoRequest {
+  fromDate: BigNumberish;
+  toDate: BigNumberish;
 }
 export interface MemberinfoResponse {
   account: string;
@@ -150,14 +182,24 @@ export interface GetMenuResponse {
   1: MenuitemResponse[];
   length: 2;
 }
+export interface GetOrdersInfoRequest {
+  fromDate: BigNumberish;
+  toDate: BigNumberish;
+}
 export interface BlockMenuContract {
   /**
-   * Payable: false
+   * Payable: true
    * Constant: false
-   * StateMutability: nonpayable
+   * StateMutability: payable
    * Type: constructor
+   * @param metadataCID Type: string, Indexed: false
+   * @param items Type: tuple[], Indexed: false
    */
-  'new'(overrides?: ContractTransactionOverrides): Promise<ContractTransaction>;
+  'new'(
+    metadataCID: string,
+    items: undefinedRequest[],
+    overrides?: ContractTransactionOverrides
+  ): Promise<ContractTransaction>;
   /**
    * Payable: false
    * Constant: true
@@ -251,6 +293,17 @@ export interface BlockMenuContract {
    * Type: function
    * @param billId Type: uint256, Indexed: false
    */
+  getBillInfo(
+    billId: BigNumberish,
+    overrides?: ContractCallOverrides
+  ): Promise<BillinfoResponse>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param billId Type: uint256, Indexed: false
+   */
   getBillOrdersInfo(
     billId: BigNumberish,
     overrides?: ContractCallOverrides
@@ -271,10 +324,12 @@ export interface BlockMenuContract {
    * Constant: true
    * StateMutability: view
    * Type: function
+   * @param filter Type: tuple, Indexed: false
    */
-  getLatestOrderInfos(
+  getBillsInfo(
+    filter: GetBillsInfoRequest,
     overrides?: ContractCallOverrides
-  ): Promise<OrderinfoResponse[]>;
+  ): Promise<BillinfoResponse[]>;
   /**
    * Payable: false
    * Constant: true
@@ -300,6 +355,17 @@ export interface BlockMenuContract {
     orderId: BigNumberish,
     overrides?: ContractCallOverrides
   ): Promise<OrderinfoResponse>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   * @param filter Type: tuple, Indexed: false
+   */
+  getOrdersInfo(
+    filter: GetOrdersInfoRequest,
+    overrides?: ContractCallOverrides
+  ): Promise<OrderinfoResponse[]>;
   /**
    * Payable: false
    * Constant: true
@@ -360,6 +426,19 @@ export interface BlockMenuContract {
    */
   transferOwnership(
     newOwner: string,
+    overrides?: ContractTransactionOverrides
+  ): Promise<ContractTransaction>;
+  /**
+   * Payable: false
+   * Constant: false
+   * StateMutability: nonpayable
+   * Type: function
+   * @param toAccount Type: address, Indexed: false
+   * @param value Type: uint256, Indexed: false
+   */
+  withdraw(
+    toAccount: string,
+    value: BigNumberish,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
 }

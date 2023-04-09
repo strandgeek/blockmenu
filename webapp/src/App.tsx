@@ -14,6 +14,8 @@ import { AppOrdersPage } from "./pages/app/Orders";
 import { AppStart } from "./pages/app/Start";
 import { AppBillPage } from "./pages/app/Bill";
 import { chains, metaMaskConnector } from "./lib/wagmi";
+import { AdminOrders } from "./pages/admin/AdminOrders";
+import { WalletProvider } from "./providers/WalletProvider";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +29,10 @@ const router = createBrowserRouter([
   {
     path: "/admin/menu",
     element: <AdminMenu />,
+  },
+  {
+    path: "/admin/orders",
+    element: <AdminOrders />,
   },
   {
     path: "/admin/bills",
@@ -66,12 +72,14 @@ function App() {
   return (
     <>
       <WagmiConfig client={wagmiClient}>
-        <OrderProvider>
-          <QueryClientProvider client={queryClient}>
-            <ToastContainer />
-            <RouterProvider router={router} />
-          </QueryClientProvider>
-        </OrderProvider>
+        <WalletProvider>
+          <OrderProvider>
+            <QueryClientProvider client={queryClient}>
+              <ToastContainer />
+              <RouterProvider router={router} />
+            </QueryClientProvider>
+          </OrderProvider>
+        </WalletProvider>
       </WagmiConfig>
     </>
   );

@@ -55,8 +55,6 @@ export const AppBillPage: FC<AppBillPageProps> = (props) => {
     setBillPaid(true);
   };
   const renderLineItem = (item: any) => {
-    console.log(itemsMap);
-    console.log(item);
     const quantity = item?.quantity?.toNumber();
     const id = item?.menuItemIdx?.toNumber();
     const info = itemsMap[id];

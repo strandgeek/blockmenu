@@ -28,7 +28,11 @@ export const Deploy: FC<DeployProps> = (props) => {
     }
     setLoading(true);
     const factory = new ethers.ContractFactory(ContractV1.abi, ContractV1.bytecode, signer);
-    const contract = await factory.deploy();
+    const deployParams = templateType === 'empty' ? ['', []] : [
+      'bafkreihh4r7zdnnarpw4ehiy4gy5vwgff2uyfpxi6zio74grndbwakqum4',
+      ['0.05', '0.08', '0.09', '0.09', '0.02', '0.04'].map(val => ({ amount: ethers.utils.parseEther(val) })),
+    ]
+    const contract = await factory.deploy(...deployParams);
     // Wait for 1 contract confirmation
     await contract.deployTransaction.wait(1);
     confettiAnimate();

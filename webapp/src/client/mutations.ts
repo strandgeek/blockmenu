@@ -1,19 +1,19 @@
 import { useMutation } from "react-query";
 import { BillMetadata, Metadata, generateBillMetadataCID, generateMetadataCID } from "../lib/metadata";
 import { OrderItem } from "../providers/OrderProvider";
-import { useContract } from "../hooks/useContract";
+import { useWallet } from "../hooks/useWallet";
 import { useSigner } from "wagmi";
 import { CreateMenuRequest } from "../types/BlockMenuContract";
-import { BigNumber, BigNumberish } from "ethers";
+import { BigNumber, BigNumberish, ethers } from "ethers";
 
 // Hooks
 
 export const useSetMetadataInfoMutation = () => {
   const { data: signer } = useSigner();
-  const contract = useContract();
+  const { contract } = useWallet();
   return useMutation({
     mutationFn: async (metadata: Metadata) => {
-      if (!contract.provider || !signer) {
+      if (!contract?.provider || !signer) {
         throw new Error('Wallet not connected');
       }
       // Configure Menu for On-Chain data
@@ -21,7 +21,7 @@ export const useSetMetadataInfoMutation = () => {
       const items: CreateMenuRequest[] = [];
       metadata.menu.categories.forEach(c => {
         c.items.forEach(i => {
-          items.push({ amount: i.price });
+          items.push({ amount: ethers.utils.parseEther(i.price) });
           idx++;
         })
       });
@@ -35,10 +35,10 @@ export const useSetMetadataInfoMutation = () => {
 
 export const useCreateBillMutation = () => {
   const { data: signer } = useSigner();
-  const contract = useContract();
+  const { contract } = useWallet();
   return useMutation({
     mutationFn: async (metadata: BillMetadata) => {
-      if (!contract.provider || !signer) {
+      if (!contract?.provider || !signer) {
         throw new Error('Wallet not connected');
       }
       const cid = await generateBillMetadataCID(metadata);
@@ -51,10 +51,10 @@ export const useCreateBillMutation = () => {
 
 export const useCreateOrderMutation = () => {
   const { data: signer } = useSigner();
-  const contract = useContract();
+  const { contract } = useWallet();
   return useMutation({
     mutationFn: async ({ orderItems }: { orderItems: OrderItem[] }) => {
-      if (!contract.provider || !signer) {
+      if (!contract?.provider || !signer) {
         throw new Error('Wallet not connected');
       }
       const res = await contract.createOrder(orderItems.map(oi => ({ menuItemIdx: oi.item.id, quantity: oi.quantity })))
@@ -66,10 +66,10 @@ export const useCreateOrderMutation = () => {
 
 export const usePayBill = () => {
   const { data: signer } = useSigner();
-  const contract = useContract();
+  const { contract } = useWallet();
   return useMutation({
     mutationFn: async ({ billId, value }: { billId: BigNumberish, value: BigNumber }) => {
-      if (!contract.provider || !signer) {
+      if (!contract?.provider || !signer) {
         throw new Error('Wallet not connected');
       }
       const res = await contract.payBill(billId, {
