@@ -49,6 +49,7 @@ abstract contract Billable is MenuManageable {
         uint id;
         Bill bill;
         OrderInfo[] orderInfos;
+        uint totalAmount;
         uint createdAt;
     }
 
@@ -168,6 +169,7 @@ abstract contract Billable is MenuManageable {
             id: billId,
             bill: bill,
             orderInfos: _getBillOrdersInfo(billId),
+            totalAmount: _getBillTotalAmount(billId),
             createdAt: bill.createdAt
         });
         return billInfo;

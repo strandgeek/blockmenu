@@ -7,6 +7,7 @@ import { getCidUrl } from '../../lib/web3storage';
 import { useNavigate } from 'react-router-dom';
 import { ItemView } from '../../components/app/ItemView';
 import { ConnectWalletButton } from '../../components/ConnectWalletButton';
+import { Amount } from '../../components/Amount';
 
 export interface AppHomePageProps {}
 
@@ -46,7 +47,7 @@ export const AppHomePage: FC<AppHomePageProps> = (props) => {
                                                     <img src={getCidUrl(item.imageCID || '')} className="object-cover w-full h-full" />
                                                 </figure>
                                             </div>
-                                            <div className="text-left">
+                                            <div className="text-left mr-2">
                                                 <div className="text-sm">{item.name}</div>
                                                 <div className="text-gray-500 text-xs line-clamp-2">{item.description}</div>
                                             </div>
@@ -54,7 +55,7 @@ export const AppHomePage: FC<AppHomePageProps> = (props) => {
                                     </div>
                                     <div className="col-span-1 flex justify-end">
                                         <div className="flex items-center">
-                                            <div className="text-sm">{item.price}</div>
+                                            <Amount value={item.price} />
                                         </div>
                                     </div>
                                 </div>

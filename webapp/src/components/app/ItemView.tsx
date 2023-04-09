@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { useOrder } from '../../hooks/useOrder';
 import { MenuItem } from '../../lib/metadata';
 import { getCidUrl } from '../../lib/web3storage';
+import { Amount } from '../Amount';
 
 export interface ItemViewProps {
     item: MenuItem | null;
@@ -73,8 +74,7 @@ export const ItemView: FC<ItemViewProps> = ({ item, ...props }) => {
                         <img className="w-full h-64 object-cover" src={getCidUrl(item.imageCID!)} />
                         <div className="p-4">
                             <div className="mt-4">
-                                <div className="text-sm text-gray-500">Price:</div>
-                                {item.price}
+                                <Amount value={item.price} />
                             </div>
                             <div className="mt-4">
                                 <div className="text-sm text-gray-500">Description:</div>

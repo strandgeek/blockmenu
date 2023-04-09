@@ -140,10 +140,24 @@ export const useAllBillsInfos = ({ fromDate, toDate, refetchInterval=0 }: { from
             ordersTotal: b.ordersTotal,
             createdAt: b.createdAt,
           },
+          orderInfos: billInfo.orderInfos.map(oi => ({
+            lines: oi.lines.map(l => ({
+              menuItemIdx: l.menuItemIdx,
+              quantity: l.quantity,
+            }))
+          })),
+          totalAmount: billInfo?.totalAmount,
         }
       }).reverse();
     } catch (error) {
       throw error;
     }
   }, { enabled: !!contract?.provider, cacheTime: 0, refetchInterval });
+}
+
+export const useContractBalance = () => {
+  const { contract } = useWallet();
+  return useQuery(['contractBalance', contract?.address], async () => {
+    return contract!.provider.getBalance(contract!.address);
+  }, { enabled: !!contract?.address && !!contract?.provider });
 }

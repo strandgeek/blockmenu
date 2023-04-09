@@ -5,6 +5,7 @@ import { AddressInfo } from '../AddressInfo';
 import { Modal, ModalProps } from '../Modal';
 import { RelativeDate } from '../RelativeDate';
 import { OrderInfosResponse, OrderinfoResponse } from '../../types/BlockMenuContract';
+import { ethers } from 'ethersv5';
 
 export interface OrderDetailsModalProps extends Omit<ModalProps, 'children'> {
     order: Partial<OrderinfoResponse>
@@ -45,8 +46,8 @@ export const OrderDetailsModal: FC<OrderDetailsModalProps> = ({ order, ...props 
                         <div className="font-bold">
                           Waiter:
                         </div>
-                        {order?.bill?.waiter ? (
-                            <AddressInfo address={order?.bill?.waiter?.toString()} short />
+                        {order?.bill?.waiter !== ethers.constants.AddressZero ? (
+                            <AddressInfo address={order?.bill?.waiter?.toString() || ''} short />
                         ) : (
                             <span className="text-gray-500">(Unassigned)</span>
                         )}

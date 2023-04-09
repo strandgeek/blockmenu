@@ -1,18 +1,21 @@
 import classNames from "classnames";
-import { FC } from "react";
-import { useAllBillsInfos, useBillMetadata } from "../../client/queries";
+import { FC, useMemo } from "react";
+import {
+  useAllBillsInfos,
+  useBillMetadata,
+  useMetadataInfo,
+} from "../../client/queries";
 import { getBillShortDescription } from "../../utils/bill";
 import { AddressInfo } from "../AddressInfo";
 import { RelativeDate } from "../RelativeDate";
 import { BillinfoResponse } from "../../types/BlockMenuContract";
-import { ethers } from "ethersv5";
+import { BigNumber, ethers } from "ethersv5";
 import { BillStatusBadge } from "./BillStatusBadge";
+import { allItemsToMap } from "../../lib/metadata";
+import { Amount } from "../Amount";
 
 const BillRow: FC<{ billInfo: BillinfoResponse }> = ({ billInfo }) => {
-  const {
-    data: billMetadata,
-    error,
-  } = useBillMetadata({
+  const { data: billMetadata } = useBillMetadata({
     billMetadataCid: billInfo?.bill?.metadataCID,
   });
   if (!billInfo || !billInfo.bill) {
@@ -44,6 +47,9 @@ const BillRow: FC<{ billInfo: BillinfoResponse }> = ({ billInfo }) => {
         </td>
         <td className="px-6 py-3 text-sm text-gray-500 font-medium text-center">
           {bill?.ordersTotal.toNumber()}
+        </td>
+        <td className="px-6 py-3 text-sm text-gray-500 font-medium text-center">
+          <Amount value={billInfo?.totalAmount} />
         </td>
         <td className="px-6 py-3 text-sm text-gray-500 font-medium">
           <div className="flex items-center space-x-2">
@@ -100,6 +106,9 @@ export const BillsTable: FC<OrdersTableProps> = (props) => {
                 </th>
                 <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Orders
+                </th>
+                <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Amount
                 </th>
                 <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Customer

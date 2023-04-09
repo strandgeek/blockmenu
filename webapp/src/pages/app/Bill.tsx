@@ -17,6 +17,7 @@ import { SuccessTick } from "../../components/SuccessTick";
 import { AppMainLayout } from "../../layouts/AppMainLayout";
 import { allItemsToMap } from "../../lib/metadata";
 import { BigNumber } from "ethers";
+import { Amount } from "../../components/Amount";
 
 export interface AppBillPageProps {}
 
@@ -149,7 +150,7 @@ export const AppBillPage: FC<AppBillPageProps> = (props) => {
           <div className="mt-4 mb-4">
             <div className="flex items-center justify-end">
               <span className="font-bold mr-2">TOTAL:</span>
-              {Number(totalWithTips || 0)}
+              <Amount value={totalWithTips} />
             </div>
           </div>
           {!isPaid ? (

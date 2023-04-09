@@ -2,6 +2,8 @@ import React, { FC, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Modal, ModalProps } from '../Modal';
 import { ImageUpload } from './ImageUpload';
+import { BTTCIcon } from '../BTTCIcon';
+import { AmountInput } from '../AmountInput';
 
 interface FormData {
     imageCID?: string;
@@ -77,14 +79,9 @@ export const AddEditMenuItemModal: FC<AddEditMenuItemModalProps> = (props) => {
             </div>
             <div className="form-control w-full mt-2">
                 <label className="label">
-                    <span className="label-text">Price (TRX)</span>
+                    <span className="label-text">Price (BTTC)</span>
                 </label>
-                <input
-                    {...register('price', { required: true })}
-                    type="text"
-                    placeholder="Type here"
-                    className="input input-bordered w-full"
-                />
+                <AmountInput {...register('price', { required: true })} />
             </div>
         </Modal>
     );

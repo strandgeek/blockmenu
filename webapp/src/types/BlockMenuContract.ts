@@ -140,8 +140,10 @@ export interface BillinfoResponse {
   1: BillResponse;
   orderInfos: OrderInfosResponse[];
   2: OrderInfosResponse[];
-  createdAt: BigNumber;
+  totalAmount: BigNumber;
   3: BigNumber;
+  createdAt: BigNumber;
+  4: BigNumber;
 }
 export interface OrderinfoResponse {
   id: BigNumber;

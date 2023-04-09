@@ -20,6 +20,9 @@ import classNames from "classnames";
 import { getIdenticonSrc } from "../utils/getIdenticonSrc";
 import LogoSrc from "../assets/logo.svg";
 import { useAccount } from "wagmi";
+import { useContractBalance } from "../client/queries";
+import { Amount } from "../components/Amount";
+import { WithdrawModal } from "../components/admin/WithdrawModal";
 
 export interface AdminMainLayoutProps {
   title: string;
@@ -33,6 +36,7 @@ export const AdminMainLayout: FC<AdminMainLayoutProps> = ({
   children,
 }) => {
   const { address } = useAccount();
+  const { data: balance, refetch: refetchBalance } = useContractBalance();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
 
@@ -65,6 +69,7 @@ export const AdminMainLayout: FC<AdminMainLayoutProps> = ({
 
   return (
     <div className="relative h-screen flex overflow-hidden bg-white">
+      <WithdrawModal open={withdrawOpen} setOpen={setWithdrawOpen} onFinish={() => refetchBalance()} />
       <Transition.Root show={sidebarOpen} as={Fragment}>
         <Dialog
           as="div"
@@ -274,7 +279,7 @@ export const AdminMainLayout: FC<AdminMainLayoutProps> = ({
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 ">
-                    ADD AMOUNT HERE
+                    {balance !== undefined ? <Amount value={balance as any} /> : null}
                   </div>
                   <div>
                     <div className="dropdown">

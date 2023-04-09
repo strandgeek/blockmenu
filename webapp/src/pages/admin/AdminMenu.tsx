@@ -15,6 +15,7 @@ import {
 } from "../../lib/metadata";
 import { getCidUrl } from "../../lib/web3storage";
 import classNames from "classnames";
+import { Amount } from "../../components/Amount";
 
 export interface AdminMenuProps {}
 
@@ -178,7 +179,9 @@ export const AdminMenu: FC<AdminMenuProps> = () => {
                               </div>
                             </div>
                           </td>
-                          <td>{item.price}</td>
+                          <td>
+                            <Amount value={item.price} />
+                          </td>
                           <th>
                             <button
                               className="btn btn-error btn-ghost btn-xs mr-4"

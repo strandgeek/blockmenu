@@ -80,3 +80,19 @@ export const usePayBill = () => {
     },
   });
 }
+
+
+export const useWithdraw = () => {
+  const { data: signer } = useSigner();
+  const { contract } = useWallet();
+  return useMutation({
+    mutationFn: async ({ toAddress, value }: { toAddress: string, value: BigNumber }) => {
+      if (!contract?.provider || !signer) {
+        throw new Error('Wallet not connected');
+      }
+      const res = await contract.withdraw(toAddress, value);
+      await res.wait();
+      return true;
+    },
+  });
+}
