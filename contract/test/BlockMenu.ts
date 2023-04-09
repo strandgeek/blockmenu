@@ -160,6 +160,24 @@ describe("BlockMenu", function () {
     });
   });
 
+  describe("Bill Total Amount", async function () {
+    it("The bill total amount should be calculated based on the menu version and keep the same even if the menu price changes", async function () {
+      const { blockMenu, customer } = await loadFixture(deployContractWithABill);
+      await expect(blockMenu.connect(customer).createOrder([{ menuItemIdx: 0, quantity: 1 }])).not.to.reverted;
+      const billTotalBefore = await blockMenu.getBillTotalAmount(1);
+      expect(billTotalBefore).to.be.equal(100);
+      // Change the menu prices
+      await blockMenu.createMenu('NEW_MENU_CID', [{ amount: 800 }, { amount: 900 }]);
+      const billTotalAfter = await blockMenu.getBillTotalAmount(1);
+      expect(billTotalAfter).to.be.equal(100);
+      await expect(blockMenu.payBill(1, { value: 100 })).not.to.reverted;
+      // Create another bill (Now the prices would be updated)
+      await expect(blockMenu.connect(customer).createBill('ANOTHER_BILD_CID')).not.to.reverted;
+      await expect(blockMenu.connect(customer).createOrder([{ menuItemIdx: 0, quantity: 1 }])).not.to.reverted;
+      expect(await blockMenu.getBillTotalAmount(2)).to.be.equal(800);
+    });
+  });
+
   describe("Pay Bill", async function () {
     it("The bill should be paid when the user sends the exact value", async function () {
       const { blockMenu, customer } = await loadFixture(deployContractWithABill);
