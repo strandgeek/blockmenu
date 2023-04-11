@@ -1,3 +1,4 @@
+import { w3mConnectors } from "@web3modal/ethereum";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 
 const donau = {
@@ -32,3 +33,6 @@ export const chains = [donau];
 export const metaMaskConnector = new MetaMaskConnector({
   chains
 });
+
+
+export const connectors = w3mConnectors({ projectId: import.meta.env.VITE_CONNECT_WALLET_PROJECT_ID, version: 1, chains });

@@ -4,23 +4,26 @@ import { ContractContext } from '../types/BlockMenuContract'
 import ContractV1 from '../contracts/v1.json';
 import { ethers } from 'ethersv5';
 import { useSigner } from 'wagmi';
+import { useSessionStorage } from 'usehooks-ts';
 
 export interface WalletProviderProps {
   children: React.ReactNode;
 }
 
 export const WalletProvider: FC<WalletProviderProps> = ({ children }) => {
+  const [contractAddr] = useSessionStorage('blockmenu-contract', '');
   const [contract, setContract] = useState<ContractContext | null>(null);
   const { data: signer } = useSigner();
   useEffect(() => {
-    const address = '0xF8564299077888082526976aaD0223e3dCAB3c43';
-    const contract = new ethers.Contract(
-      address,
-      ContractV1.abi,
-      signer || undefined,
-    ) as unknown as ContractContext;
-    setContract(contract);
-  }, [signer]);
+    if (contractAddr) {
+      const contract = new ethers.Contract(
+        contractAddr,
+        ContractV1.abi,
+        signer || undefined,
+      ) as unknown as ContractContext;
+      setContract(contract);
+    }
+  }, [signer, contractAddr]);
   return (
     <walletContext.Provider value={{ contract }}>
       {children}

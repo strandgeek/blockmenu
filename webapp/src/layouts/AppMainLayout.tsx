@@ -16,6 +16,9 @@ const CustomStylesWrapper = styled.div<{ primaryColor?: string }>`
       }
     }
   }
+  .tabs-boxed .tab-active:not(.tab-disabled):not([disabled]) {
+    background-color: ${(props) => props.primaryColor};
+  }
   .btn:disabled {
     color: rgba(255, 255, 255, 0.5);
     opacity: 0.5;

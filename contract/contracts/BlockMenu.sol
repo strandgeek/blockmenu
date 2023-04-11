@@ -76,8 +76,8 @@ contract BlockMenu is Ownable, MenuManageable, Billable, RestaurantStaff {
      */
     function assignWaiterToBill(uint billId, address waiter) public onlyStaff {
         require(
-            hasRole(waiter, WAITER_ROLE),
-            "provided account is not a waiter"
+            _isMember(waiter),
+            "provided account is not a member"
         );
         return _assignWaiterToBill(billId, waiter);
     }

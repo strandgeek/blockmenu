@@ -1,30 +1,34 @@
 import { FC, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useCreateBillMutation } from "../../client/mutations";
 import { useCurrentBill } from "../../client/queries";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { useAccount } from "wagmi";
+import { ConnectWalletButton } from "../../components/ConnectWalletButton";
+import { useSessionStorage } from "usehooks-ts";
 
 export interface AppStartProps {}
 
 export const AppStart: FC<AppStartProps> = (props) => {
+  const [contractAddr, setContractAddr] = useSessionStorage('blockmenu-contract', '');
+  const [refCode, setRefCode] = useSessionStorage('blockmenu-refcode', '');
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { address } = useAccount();
-//   const { data: metadataInfo } = useMetadataInfo();
   const { mutateAsync, isLoading } = useCreateBillMutation();
   const { data: bill, refetch: refetchBill } = useCurrentBill();
   const [name, setName] = useState("");
-  const onStartClick = async () => {
-    try {
-      await mutateAsync({
-        name,
-      });
-      navigate("/app");
-    } catch (error: any) {
-      toast(error.message);
+  useEffect(() => {
+    const addr = searchParams.get('contract');
+    if (addr) {
+      setContractAddr(addr);
     }
-  };
+    const refCode = searchParams.get('refCode');
+    if (refCode) {
+      setRefCode(refCode);
+    }
+  }, [searchParams]);
   useEffect(() => {
     async function refetch() {
       const bill = await refetchBill();
@@ -34,6 +38,17 @@ export const AppStart: FC<AppStartProps> = (props) => {
     }
     refetch();
   }, []);
+  const onStartClick = async () => {
+    try {
+      await mutateAsync({
+        name,
+        refCode,
+      });
+      navigate("/app");
+    } catch (error: any) {
+      toast(error.message);
+    }
+  };
   return (
     <div className="w-screen h-screen flex items-center justify-center">
       <div className="w-full">
@@ -75,7 +90,7 @@ export const AppStart: FC<AppStartProps> = (props) => {
               <div>Before continue, connect your Metamask wallet</div>
               <div className="flex items-center justify-center mt-8"></div>
               <div className="w-full flex items-center justify-center">
-                TODO: Connect Wallet Button Here
+                <ConnectWalletButton />
               </div>
             </div>
           )}

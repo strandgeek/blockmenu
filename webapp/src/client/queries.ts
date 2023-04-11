@@ -186,6 +186,17 @@ export const useMembers = () => {
   }, { enabled: !!contract?.address && !!contract?.provider });
 }
 
+export const useOwner = () => {
+  const { contract } = useWallet();
+  return useQuery(['owner', contract?.address], async () => {
+    try {
+      return contract?.owner();
+    } catch (error) {
+      throw error;
+    }
+  }, { enabled: !!contract?.address && !!contract?.provider });
+}
+
 export const useConfigMetadataInfo = () => {
   const { contract } = useWallet();
   return useQuery('configMetadataInfo', async () => {

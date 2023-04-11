@@ -21,8 +21,8 @@ abstract contract RestaurantStaff is Ownable {
   /**
     * @dev Returns `true` if `account` is a member.
     */
-  function _isMember(address account) private view returns (bool) {
-    return _membersRoles[account] != 0;
+  function _isMember(address account) internal view returns (bool) {
+    return owner() == account || _membersRoles[account] != 0;
   }
 
   /**

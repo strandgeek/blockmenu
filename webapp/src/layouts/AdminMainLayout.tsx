@@ -12,6 +12,7 @@ import {
   EllipsisVerticalIcon,
   ArrowDownOnSquareIcon,
   DevicePhoneMobileIcon,
+  QrCodeIcon,
 } from "@heroicons/react/24/outline";
 import {
   MagnifyingGlassCircleIcon,
@@ -21,9 +22,12 @@ import classNames from "classnames";
 import { getIdenticonSrc } from "../utils/getIdenticonSrc";
 import LogoSrc from "../assets/logo.svg";
 import { useAccount } from "wagmi";
-import { useContractBalance } from "../client/queries";
+import { useContractBalance, useMembers, useOwner } from "../client/queries";
 import { Amount } from "../components/Amount";
 import { WithdrawModal } from "../components/admin/WithdrawModal";
+import { useNavigate } from "react-router-dom";
+import { useSessionStorage } from "usehooks-ts";
+import { toast } from "react-toastify";
 
 export interface AdminMainLayoutProps {
   title: string;
@@ -36,11 +40,31 @@ export const AdminMainLayout: FC<AdminMainLayoutProps> = ({
   actions,
   children,
 }) => {
-  const { address } = useAccount();
+  const navigate = useNavigate();
+  const { address, isConnected } = useAccount();
+  const [contractAddr, setContractAddr] = useSessionStorage('blockmenu-contract', '');
   const { data: balance, refetch: refetchBalance } = useContractBalance();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
+  const { data: members } = useMembers();
+  const { data: owner } = useOwner();
+  useEffect(() => {
+    const isMember = owner === address || !!members?.find(m => m.account === address);
+    if (owner && members && !isMember) {
+      setContractAddr('');
+      navigate('/admin/auth');
+      toast.error('You are not a staff member from this Restaurant');
+      return;
+    }
+  }, [owner, members]);
 
+  useEffect(() => {
+    if (!isConnected) {
+      setContractAddr('');
+      navigate('/admin/auth');
+      toast.error('Not Connected');
+    }
+  }, [isConnected]);
 
   const applyMenuProps = (href: string) => ({
     href,
@@ -70,6 +94,11 @@ export const AdminMainLayout: FC<AdminMainLayoutProps> = ({
       name: "Preview dApp",
       icon: DevicePhoneMobileIcon,
       ...applyMenuProps("/admin/preview"),
+    },
+    {
+      name: "QR Code Generator",
+      icon: QrCodeIcon,
+      ...applyMenuProps("/admin/qr-code"),
     },
   ];
 

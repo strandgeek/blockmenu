@@ -141,3 +141,19 @@ export const useSetConfigInfo = () => {
     },
   });
 }
+
+export const useAssignWaiterToBill = () => {
+  const { data: signer } = useSigner();
+  const { contract } = useWallet();
+  return useMutation({
+    mutationFn: async ({ billId, waiterAddress }: { billId: BigNumber, waiterAddress: string }) => {
+      if (!contract?.provider || !signer) {
+        throw new Error('Wallet not connected');
+      }
+      const res = await contract.assignWaiterToBill(billId, waiterAddress);
+      await res.wait();
+      return true;
+    },
+  });
+}
+

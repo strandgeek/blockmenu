@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState } from "react";
 import {
   useAllBillsInfos,
   useBillMetadata,
@@ -13,8 +13,11 @@ import { BigNumber, ethers } from "ethersv5";
 import { BillStatusBadge } from "./BillStatusBadge";
 import { allItemsToMap } from "../../lib/metadata";
 import { Amount } from "../Amount";
+import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+import { AssignYourselfModal } from "./AssignYourselfModal";
 
 const BillRow: FC<{ billInfo: BillinfoResponse }> = ({ billInfo }) => {
+  const [showAssignModal, setShowAssignModal] = useState(false);
   const { data: billMetadata } = useBillMetadata({
     billMetadataCid: billInfo?.bill?.metadataCID,
   });
@@ -24,6 +27,7 @@ const BillRow: FC<{ billInfo: BillinfoResponse }> = ({ billInfo }) => {
   const { bill } = billInfo;
   return (
     <>
+    <AssignYourselfModal bill={bill} open={showAssignModal} setOpen={() => setShowAssignModal(false)} />
       <tr>
         <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900">
           <div className="flex items-center space-x-3 lg:pl-2">
@@ -74,6 +78,23 @@ const BillRow: FC<{ billInfo: BillinfoResponse }> = ({ billInfo }) => {
         <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
           <RelativeDate value={bill?.createdAt} />
         </td>
+        <td>
+          <div className="dropdown dropdown-end">
+            <label tabIndex={0} className="m-1">
+              <button className="btn btn-sm btn-circle btn-ghost">
+                <EllipsisVerticalIcon className="h-6 w-6 text-gray-400" />
+              </button>
+            </label>
+            <ul
+              tabIndex={0}
+              className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+            >
+              <li>
+                <a onClick={() => setShowAssignModal(true)}>Assign Yourself</a>
+              </li>
+            </ul>
+          </div>
+        </td>
       </tr>
     </>
   );
@@ -119,6 +140,7 @@ export const BillsTable: FC<OrdersTableProps> = (props) => {
                 <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Created
                 </th>
+                <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider" />
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">

@@ -13,12 +13,17 @@ import { OrderProvider } from "./providers/OrderProvider";
 import { AppOrdersPage } from "./pages/app/Orders";
 import { AppStart } from "./pages/app/Start";
 import { AppBillPage } from "./pages/app/Bill";
-import { chains, metaMaskConnector } from "./lib/wagmi";
+import { chains, connectors, metaMaskConnector } from "./lib/wagmi";
 import { AdminOrders } from "./pages/admin/AdminOrders";
 import { WalletProvider } from "./providers/WalletProvider";
 import { AdminUsers } from "./pages/admin/AdminUsers";
 import { AdminConfig } from "./pages/admin/AdminConfig";
 import { AdminPreview } from "./pages/admin/AdminPreview";
+import { QrCodeGenerator } from "./pages/admin/QrCodeGenerator";
+import { Welcome } from "./pages/app/Welcome";
+import { EthereumClient, w3mConnectors } from "@web3modal/ethereum";
+import { Web3Modal } from "@web3modal/react";
+import { AdminAuth } from "./pages/admin/AdminAuth";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +33,10 @@ const router = createBrowserRouter([
   {
     path: "/deploy",
     element: <Deploy />,
+  },
+  {
+    path: "/admin/auth",
+    element: <AdminAuth />,
   },
   {
     path: "/admin/menu",
@@ -54,8 +63,16 @@ const router = createBrowserRouter([
     element: <AdminPreview />,
   },
   {
+    path: "/admin/qr-code",
+    element: <QrCodeGenerator />,
+  },
+  {
     path: "/app",
     element: <AppHomePage />,
+  },
+  {
+    path: "/app/welcome",
+    element: <Welcome />,
   },
   {
     path: "/app/start",
@@ -76,12 +93,16 @@ const queryClient = new QueryClient();
 
 const { provider } = configureChains(chains, [publicProvider()]);
 
+const projectId = import.meta.env.VITE_CONNECT_WALLET_PROJECT_ID;
+
 // Create a Wagmi Client (Wallet)
 const wagmiClient = createClient({
   autoConnect: true,
-  connectors: [metaMaskConnector],
+  connectors,
   provider,
 });
+
+const ethereumClient = new EthereumClient(wagmiClient, chains)
 
 function App() {
   return (
@@ -96,6 +117,7 @@ function App() {
           </OrderProvider>
         </WalletProvider>
       </WagmiConfig>
+      <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
     </>
   );
 }
