@@ -1,5 +1,5 @@
 import { useMutation } from "react-query";
-import { BillMetadata, Metadata, generateBillMetadataCID, generateMetadataCID } from "../lib/metadata";
+import { BillMetadata, ConfigMetadata, Metadata, generateMetadataCID } from "../lib/metadata";
 import { OrderItem } from "../providers/OrderProvider";
 import { useWallet } from "../hooks/useWallet";
 import { useSigner } from "wagmi";
@@ -41,7 +41,7 @@ export const useCreateBillMutation = () => {
       if (!contract?.provider || !signer) {
         throw new Error('Wallet not connected');
       }
-      const cid = await generateBillMetadataCID(metadata);
+      const cid = await generateMetadataCID(metadata);
       const res = await contract.createBill(cid);
       await res.wait();
       return metadata;
@@ -120,6 +120,22 @@ export const useRemoveMember = () => {
         throw new Error('Wallet not connected');
       }
       const res = await contract.removeMember(toAddress);
+      await res.wait();
+      return true;
+    },
+  });
+}
+
+export const useSetConfigInfo = () => {
+  const { data: signer } = useSigner();
+  const { contract } = useWallet();
+  return useMutation({
+    mutationFn: async (configMetadata: ConfigMetadata) => {
+      if (!contract?.provider || !signer) {
+        throw new Error('Wallet not connected');
+      }
+      const cid = await generateMetadataCID(configMetadata);
+      const res = await contract.setConfigCID(cid);
       await res.wait();
       return true;
     },

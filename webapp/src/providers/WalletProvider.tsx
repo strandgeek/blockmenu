@@ -13,7 +13,7 @@ export const WalletProvider: FC<WalletProviderProps> = ({ children }) => {
   const [contract, setContract] = useState<ContractContext | null>(null);
   const { data: signer } = useSigner();
   useEffect(() => {
-    const address = '0xdEB47D303F3AFaa911584542a8e1531188e8586F';
+    const address = '0xF8564299077888082526976aaD0223e3dCAB3c43';
     const contract = new ethers.Contract(
       address,
       ContractV1.abi,

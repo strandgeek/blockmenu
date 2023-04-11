@@ -8,10 +8,17 @@ import "./MenuManageable.sol";
 import "./RestaurantStaff.sol";
 
 contract BlockMenu is Ownable, MenuManageable, Billable, RestaurantStaff {
-    constructor(string memory metadataCID, MenuItem[] memory items) payable {
+    string public configCID;
+
+    constructor(
+        string memory metadataCID,
+        MenuItem[] memory items,
+        string memory _configCID
+    ) payable {
         if (bytes(metadataCID).length > 0 && items.length > 0) {
             _createMenu(metadataCID, items);
         }
+        configCID = _configCID;
     }
 
     /**
@@ -22,6 +29,13 @@ contract BlockMenu is Ownable, MenuManageable, Billable, RestaurantStaff {
         require(value > 0, "value is zero");
         require(address(this).balance >= value, "insufficient funds");
         toAccount.transfer(value);
+    }
+
+    /**
+     * @dev Set the config CID (Only Contract Owner is allowed)
+     */
+    function setConfigCID(string memory _configCID) public onlyOwner {
+        configCID = _configCID;
     }
 
     /**

@@ -64,6 +64,7 @@ export type BlockMenuContractMethodNames =
   | 'WAITER_ROLE'
   | 'addMember'
   | 'assignWaiterToBill'
+  | 'configCID'
   | 'createBill'
   | 'createMenu'
   | 'createOrder'
@@ -81,6 +82,7 @@ export type BlockMenuContractMethodNames =
   | 'payBill'
   | 'removeMember'
   | 'renounceOwnership'
+  | 'setConfigCID'
   | 'transferOwnership'
   | 'withdraw';
 export interface undefinedRequest {
@@ -196,10 +198,12 @@ export interface BlockMenuContract {
    * Type: constructor
    * @param metadataCID Type: string, Indexed: false
    * @param items Type: tuple[], Indexed: false
+   * @param _configCID Type: string, Indexed: false
    */
   'new'(
     metadataCID: string,
     items: undefinedRequest[],
+    _configCID: string,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
   /**
@@ -242,6 +246,13 @@ export interface BlockMenuContract {
     waiter: string,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
+  /**
+   * Payable: false
+   * Constant: true
+   * StateMutability: view
+   * Type: function
+   */
+  configCID(overrides?: ContractCallOverrides): Promise<string>;
   /**
    * Payable: false
    * Constant: false
@@ -417,6 +428,17 @@ export interface BlockMenuContract {
    * Type: function
    */
   renounceOwnership(
+    overrides?: ContractTransactionOverrides
+  ): Promise<ContractTransaction>;
+  /**
+   * Payable: false
+   * Constant: false
+   * StateMutability: nonpayable
+   * Type: function
+   * @param _configCID Type: string, Indexed: false
+   */
+  setConfigCID(
+    _configCID: string,
     overrides?: ContractTransactionOverrides
   ): Promise<ContractTransaction>;
   /**

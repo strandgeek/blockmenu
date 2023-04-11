@@ -11,6 +11,7 @@ import {
   UsersIcon,
   EllipsisVerticalIcon,
   ArrowDownOnSquareIcon,
+  DevicePhoneMobileIcon,
 } from "@heroicons/react/24/outline";
 import {
   MagnifyingGlassCircleIcon,
@@ -64,6 +65,11 @@ export const AdminMainLayout: FC<AdminMainLayoutProps> = ({
       name: "Configuration",
       icon: Cog6ToothIcon,
       ...applyMenuProps("/admin/config"),
+    },
+    {
+      name: "Preview dApp",
+      icon: DevicePhoneMobileIcon,
+      ...applyMenuProps("/admin/preview"),
     },
   ];
 

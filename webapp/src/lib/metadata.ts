@@ -24,7 +24,13 @@ export interface BillMetadata {
   refCode?: string;
 }
 
-export const generateMetadataCID = (metadata: Metadata) => {
+export interface ConfigMetadata {
+  restaurantName?: string;
+  logoCID?: string;
+  primaryColor?: string;
+}
+
+export const generateMetadataCID = (metadata: Metadata | BillMetadata | ConfigMetadata) => {
   const blob = new Blob([JSON.stringify(metadata)], { type: 'application/json' })
   const file = new File([blob], 'metadata.json');
   return web3Storage.put([file], { wrapWithDirectory: false });
@@ -41,10 +47,4 @@ export const allItemsToMap = (metadata?: Metadata) => {
     }
   }
   return flattenItems;
-}
-
-export const generateBillMetadataCID = (billMetadata: BillMetadata) => {
-  const blob = new Blob([JSON.stringify(billMetadata)], { type: 'application/json' })
-  const file = new File([blob], 'metadata.json');
-  return web3Storage.put([file], { wrapWithDirectory: false });
 }

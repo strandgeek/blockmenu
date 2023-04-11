@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { useWallet } from "../hooks/useWallet";
 import { getCidUrl } from "../lib/web3storage";
-import { BillMetadata, Metadata } from "../lib/metadata";
+import { BillMetadata, ConfigMetadata, Metadata } from "../lib/metadata";
 import axios from 'axios';
 import { useAccount, useProvider } from "wagmi";
 import { BigNumber, BigNumberish } from "ethersv5";
@@ -15,6 +15,15 @@ const EmptyMetadataInfo = {
     }
   }
 }
+
+const EmptyConfigMetadataInfo = {
+  cid: null,
+  metadata: {
+    restaurantName: '',
+    logoCID: '',
+    primaryColor: '',
+  }
+};
 
 // Hooks
 
@@ -175,4 +184,23 @@ export const useMembers = () => {
       throw error;
     }
   }, { enabled: !!contract?.address && !!contract?.provider });
+}
+
+export const useConfigMetadataInfo = () => {
+  const { contract } = useWallet();
+  return useQuery('configMetadataInfo', async () => {
+    try {
+      const cid = await contract!.configCID();
+      if (cid === '') {
+        return EmptyConfigMetadataInfo;
+      }
+      const { data: metadata } = await axios.get<ConfigMetadata>(getCidUrl(cid));
+      return {
+        cid,
+        metadata,
+      }
+    } catch (error) {
+      return EmptyConfigMetadataInfo;
+    }
+  }, { enabled: !!contract?.provider });
 }

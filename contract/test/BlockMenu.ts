@@ -10,7 +10,7 @@ describe("BlockMenu", function () {
     const accounts = await ethers.getSigners();
 
     const BlockMenu = await ethers.getContractFactory("BlockMenu");
-    const blockMenu = await BlockMenu.deploy('MENU_IPFS_CID', [{ amount: 100 }, { amount: 200 }], { value: 100 });
+    const blockMenu = await BlockMenu.deploy('MENU_IPFS_CID', [{ amount: 100 }, { amount: 200 }], 'CONFIG_IPFS_CID', { value: 100 });
 
     const [owner, admin, waiter, customer, customerWithoutBill] = accounts;
 
@@ -41,6 +41,37 @@ describe("BlockMenu", function () {
       expect(items).to.lengthOf(2);
       expect(items[0].amount).to.be.equal(100);
       expect(items[1].amount).to.be.equal(200);
+      const configCID = await blockMenu.configCID();
+      expect(configCID).to.be.equal('CONFIG_IPFS_CID');
+    });
+  });
+
+  describe("Config", function () {
+    const expectSetConfigCID = async (blockMenu: BlockMenu, from: Signer, shouldRevert: boolean) => {
+      const txn = blockMenu.connect(from).setConfigCID('NEW_CONFIG_CID');
+      if (shouldRevert) {
+        await expect(txn).to.be.revertedWith('Ownable: caller is not the owner');
+      } else {
+        await expect(txn).not.to.be.reverted;
+        const configCID = await blockMenu.configCID();
+        expect(configCID).to.be.equal('NEW_CONFIG_CID');
+      }
+    }
+    it("As owner: The menu should be created successfully", async function () {
+      const { blockMenu, owner } = await loadFixture(deployEmptyContract);
+      await expectSetConfigCID(blockMenu, owner, false);
+    });
+    it("As admin: The menu should be created successfully", async function () {
+      const { blockMenu, admin } = await loadFixture(deployEmptyContract);
+      await expectSetConfigCID(blockMenu, admin, true);
+    });
+    it("As waiter: User should not be allowed to create menu", async function () {
+      const { blockMenu, waiter } = await loadFixture(deployEmptyContract);
+      await expectSetConfigCID(blockMenu, waiter, true);
+    });
+    it("As customer: User should not be allowed to create menu", async function () {
+      const { blockMenu, customer } = await loadFixture(deployEmptyContract);
+      await expectSetConfigCID(blockMenu, customer, true);
     });
   });
 

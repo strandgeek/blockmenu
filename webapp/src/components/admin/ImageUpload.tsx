@@ -1,12 +1,13 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { getCidUrl, web3Storage } from '../../lib/web3storage';
 
 export interface ImageUploadProps {
+  cid?: string;
   onChange: (cid: string) => void;
   imgPreviewClasses?: string;
 }
 
-export const ImageUpload: FC<ImageUploadProps> = ({ onChange, imgPreviewClasses = 'w-full h-72 object-cover' }) => {
+export const ImageUpload: FC<ImageUploadProps> = ({ cid, onChange, imgPreviewClasses = 'w-full h-72 object-cover' }) => {
   const [imageCID, setImageCID] = useState<string>();
   const onFileChange: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
     const { files } = e.target;
@@ -18,6 +19,9 @@ export const ImageUpload: FC<ImageUploadProps> = ({ onChange, imgPreviewClasses 
     setImageCID(cid);
     onChange(cid);
   }
+  useEffect(() => {
+    setImageCID(cid);
+  }, [cid]);
   return (
     <div>
       {imageCID && (

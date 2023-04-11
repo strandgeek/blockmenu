@@ -18,6 +18,7 @@ import { AdminOrders } from "./pages/admin/AdminOrders";
 import { WalletProvider } from "./providers/WalletProvider";
 import { AdminUsers } from "./pages/admin/AdminUsers";
 import { AdminConfig } from "./pages/admin/AdminConfig";
+import { AdminPreview } from "./pages/admin/AdminPreview";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
   {
     path: "/admin/config",
     element: <AdminConfig />,
+  },
+  {
+    path: "/admin/preview",
+    element: <AdminPreview />,
   },
   {
     path: "/app",
