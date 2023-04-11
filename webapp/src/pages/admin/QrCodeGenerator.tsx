@@ -4,7 +4,6 @@ import QRCode from "react-qr-code";
 import { useWallet } from "../../hooks/useWallet";
 import { ClipboardIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
-import { generateMetamaskDeeplink } from "../../utils/generateMetamaskDeepLink";
 
 export interface QrCodeGeneratorProps {}
 
