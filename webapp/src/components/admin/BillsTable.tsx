@@ -13,8 +13,14 @@ import { BigNumber, ethers } from "ethersv5";
 import { BillStatusBadge } from "./BillStatusBadge";
 import { allItemsToMap } from "../../lib/metadata";
 import { Amount } from "../Amount";
-import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+import {
+  DocumentCheckIcon,
+  EllipsisVerticalIcon,
+  QrCodeIcon,
+} from "@heroicons/react/24/outline";
 import { AssignYourselfModal } from "./AssignYourselfModal";
+import { Link } from "react-router-dom";
+import QRCode from "react-qr-code";
 
 const BillRow: FC<{ billInfo: BillinfoResponse }> = ({ billInfo }) => {
   const [showAssignModal, setShowAssignModal] = useState(false);
@@ -27,7 +33,11 @@ const BillRow: FC<{ billInfo: BillinfoResponse }> = ({ billInfo }) => {
   const { bill } = billInfo;
   return (
     <>
-    <AssignYourselfModal bill={bill} open={showAssignModal} setOpen={() => setShowAssignModal(false)} />
+      <AssignYourselfModal
+        bill={bill}
+        open={showAssignModal}
+        setOpen={() => setShowAssignModal(false)}
+      />
       <tr>
         <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900">
           <div className="flex items-center space-x-3 lg:pl-2">
@@ -103,7 +113,7 @@ const BillRow: FC<{ billInfo: BillinfoResponse }> = ({ billInfo }) => {
 export interface OrdersTableProps {}
 
 export const BillsTable: FC<OrdersTableProps> = (props) => {
-  const { data: billInfos } = useAllBillsInfos({});
+  const { data: billInfos, isLoading } = useAllBillsInfos({});
   if (!billInfos) {
     return null;
   }
@@ -152,6 +162,21 @@ export const BillsTable: FC<OrdersTableProps> = (props) => {
               ))}
             </tbody>
           </table>
+
+          {!isLoading && billInfos.length === 0 ? (
+            <div className="w-full">
+              <div className="py-24 w-128 mx-auto text-center">
+                <DocumentCheckIcon className="mx-auto h-12 w-12 text-gray-400" />
+                <h3 className="mt-2 text-sm font-medium text-gray-900">
+                  No orders created yet
+                </h3>
+                <Link className="btn btn-outline mt-8" to="/admin/qr-code">
+                  <QrCodeIcon className="h-6 w-6 mr-2" />
+                  Share the QR Code
+                </Link>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

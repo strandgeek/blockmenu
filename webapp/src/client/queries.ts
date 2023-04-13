@@ -57,7 +57,17 @@ export const useCurrentBill = () => {
       if (!bill.exists) {
         return null;
       }
-      return bill;
+      return {
+        id: bill.id,
+        owner: bill.owner,
+        exists: bill.exists,
+        waiter: bill.waiter,
+        menuVersion: bill.menuVersion,
+        metadataCID: bill.metadataCID,
+        status: bill.status,
+        ordersTotal: bill.ordersTotal,
+        createdAt: bill.createdAt,
+      };
     } catch (error) {
       return null;
     }

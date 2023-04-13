@@ -4,8 +4,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { CheckCircleIcon, InboxIcon } from "@heroicons/react/24/solid";
 import classNames from "classnames";
-import React, { FC, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { FC, useEffect, useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { usePayBill } from "../../client/mutations";
 import {
   useBillTotalAmount,
@@ -18,6 +18,7 @@ import { AppMainLayout } from "../../layouts/AppMainLayout";
 import { allItemsToMap } from "../../lib/metadata";
 import { BigNumber } from "ethers";
 import { Amount } from "../../components/Amount";
+import { useAccount } from "wagmi";
 
 export interface AppBillPageProps {}
 
@@ -27,12 +28,19 @@ export const AppBillPage: FC<AppBillPageProps> = (props) => {
   const { data: billTotal } = useBillTotalAmount({ billId: bill?.id });
   const { data: orders } = useOrdersInfos({ billId: bill?.id });
   const [billPaid, setBillPaid] = useState(false);
+  const navigate = useNavigate();
+  const { isConnected } = useAccount();
   const itemsMap = useMemo(
     () => allItemsToMap(metadataInfo?.metadata),
     [metadataInfo]
   );
   const [tipPercent, setTipPercent] = useState<number>();
   const { mutateAsync, isLoading } = usePayBill();
+  useEffect(() => {
+    if (!isConnected) {
+        navigate('/app/start');
+    }
+}, [isConnected]);
   const totalWithTips = useMemo(() => {
     if (!billTotal) {
       return 0;

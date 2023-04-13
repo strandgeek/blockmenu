@@ -15,14 +15,18 @@ export const AdminAuth: FC<AdminAuthProps> = (props) => {
   const { isConnected } = useAccount({
     onConnect: () => {
       if (contractAddr !== '') {
-        navigate('/admin/menu');
+        navigate('/admin');
       }
     },
   });
   const { open } = useWeb3Modal();
   const connect = () => {
     setContractAddr(contract || '');
-    open();
+    if (isConnected) {
+      navigate('/admin');
+    } else {
+      open();
+    }
   };
   return (
     <div className="w-screen h-screen bg-gray-50 pt-64 ">

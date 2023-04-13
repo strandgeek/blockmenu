@@ -28,6 +28,8 @@ import { WithdrawModal } from "../components/admin/WithdrawModal";
 import { useNavigate } from "react-router-dom";
 import { useSessionStorage } from "usehooks-ts";
 import { toast } from "react-toastify";
+import { useWallet } from "../hooks/useWallet";
+import { getShortAddress } from "../utils/getShortAddress";
 
 export interface AdminMainLayoutProps {
   title: string;
@@ -42,27 +44,31 @@ export const AdminMainLayout: FC<AdminMainLayoutProps> = ({
 }) => {
   const navigate = useNavigate();
   const { address, isConnected } = useAccount();
-  const [contractAddr, setContractAddr] = useSessionStorage('blockmenu-contract', '');
+  const [contractAddr, setContractAddr] = useSessionStorage(
+    "blockmenu-contract",
+    ""
+  );
   const { data: balance, refetch: refetchBalance } = useContractBalance();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const { data: members } = useMembers();
   const { data: owner } = useOwner();
   useEffect(() => {
-    const isMember = owner === address || !!members?.find(m => m.account === address);
+    const isMember =
+      owner === address || !!members?.find((m) => m.account === address);
     if (owner && members && !isMember) {
-      setContractAddr('');
-      navigate('/admin/auth');
-      toast.error('You are not a staff member from this Restaurant');
+      setContractAddr("");
+      navigate("/admin/auth");
+      toast.error("You are not a staff member from this Restaurant");
       return;
     }
   }, [owner, members]);
 
   useEffect(() => {
-    if (!isConnected) {
-      setContractAddr('');
-      navigate('/admin/auth');
-      toast.error('Not Connected');
+    if (!isConnected || !contractAddr) {
+      setContractAddr("");
+      navigate("/admin/auth");
+      toast.error("Not Connected");
     }
   }, [isConnected]);
 
@@ -104,7 +110,11 @@ export const AdminMainLayout: FC<AdminMainLayoutProps> = ({
 
   return (
     <div className="relative h-screen flex overflow-hidden bg-white">
-      <WithdrawModal open={withdrawOpen} setOpen={setWithdrawOpen} onFinish={() => refetchBalance()} />
+      <WithdrawModal
+        open={withdrawOpen}
+        setOpen={setWithdrawOpen}
+        onFinish={() => refetchBalance()}
+      />
       <Transition.Root show={sidebarOpen} as={Fragment}>
         <Dialog
           as="div"
@@ -187,32 +197,6 @@ export const AdminMainLayout: FC<AdminMainLayoutProps> = ({
                       </a>
                     ))}
                   </div>
-                  <div className="mt-8">
-                    <h3
-                      className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider"
-                      id="teams-headline"
-                    >
-                      Restaurant Status
-                    </h3>
-                    <div
-                      className="mt-1 space-y-1"
-                      role="group"
-                      aria-labelledby="teams-headline"
-                    >
-                      <a
-                        href={""}
-                        className="group flex items-center px-3 py-2 text-base leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50"
-                      >
-                        <span
-                          className={classNames(
-                            "bg-green-500 w-2.5 h-2.5 mr-4 rounded-full"
-                          )}
-                          aria-hidden="true"
-                        />
-                        <span className="truncate">Open</span>
-                      </a>
-                    </div>
-                  </div>
                 </nav>
               </div>
             </div>
@@ -245,12 +229,12 @@ export const AdminMainLayout: FC<AdminMainLayoutProps> = ({
                           {/* TODO: ADD AVATAR IMAGE HERE */}
                           <img
                             className="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0"
-                            src={getIdenticonSrc(address || '')}
+                            src={getIdenticonSrc(address || "")}
                             alt=""
                           />
                           <span className="flex-1 flex flex-col min-w-0">
                             <span className="text-gray-900 text-sm font-medium truncate mr-4">
-                              {address}
+                              {getShortAddress(address)}
                             </span>
                           </span>
                         </span>
@@ -314,7 +298,9 @@ export const AdminMainLayout: FC<AdminMainLayoutProps> = ({
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 ">
-                    {balance !== undefined ? <Amount value={balance as any} /> : null}
+                    {balance !== undefined ? (
+                      <Amount value={balance as any} />
+                    ) : null}
                   </div>
                   <div>
                     <div className="dropdown">
@@ -389,157 +375,14 @@ export const AdminMainLayout: FC<AdminMainLayoutProps> = ({
           </button>
           <div className="flex-1 flex justify-between px-4 sm:px-6 lg:px-8">
             <div className="flex-1 flex">
-              <form className="w-full flex md:ml-0" action="#" method="GET">
-                <label htmlFor="search-field" className="sr-only">
-                  Search
-                </label>
-                <div className="relative w-full text-gray-400 focus-within:text-gray-600">
-                  <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-                    <MagnifyingGlassCircleIcon
-                      className="h-5 w-5"
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <input
-                    id="search-field"
-                    name="search-field"
-                    className="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-transparent focus:placeholder-gray-400 sm:text-sm"
-                    placeholder="Search"
-                    type="search"
-                  />
-                </div>
-              </form>
+              
             </div>
             <div className="flex items-center">
-              {/* Profile dropdown */}
-              <Menu as="div" className="ml-3 relative">
-                {({ open }) => (
-                  <>
-                    <div>
-                      <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
-                        <span className="sr-only">Open user menu</span>
-                        <img
-                          className="h-8 w-8 rounded-full"
-                          src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                          alt=""
-                        />
-                      </Menu.Button>
-                    </div>
-                    <Transition
-                      show={open}
-                      as={Fragment}
-                      enter="transition ease-out duration-100"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-75"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
-                    >
-                      <Menu.Items
-                        static
-                        className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none"
-                      >
-                        <div className="py-1">
-                          <Menu.Item>
-                            {({ active }) => (
-                              <a
-                                href="#"
-                                className={classNames(
-                                  active
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "text-gray-700",
-                                  "block px-4 py-2 text-sm"
-                                )}
-                              >
-                                View profile
-                              </a>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <a
-                                href="#"
-                                className={classNames(
-                                  active
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "text-gray-700",
-                                  "block px-4 py-2 text-sm"
-                                )}
-                              >
-                                Settings
-                              </a>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <a
-                                href="#"
-                                className={classNames(
-                                  active
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "text-gray-700",
-                                  "block px-4 py-2 text-sm"
-                                )}
-                              >
-                                Notifications
-                              </a>
-                            )}
-                          </Menu.Item>
-                        </div>
-                        <div className="py-1">
-                          <Menu.Item>
-                            {({ active }) => (
-                              <a
-                                href="#"
-                                className={classNames(
-                                  active
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "text-gray-700",
-                                  "block px-4 py-2 text-sm"
-                                )}
-                              >
-                                Get desktop app
-                              </a>
-                            )}
-                          </Menu.Item>
-                          <Menu.Item>
-                            {({ active }) => (
-                              <a
-                                href="#"
-                                className={classNames(
-                                  active
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "text-gray-700",
-                                  "block px-4 py-2 text-sm"
-                                )}
-                              >
-                                Support
-                              </a>
-                            )}
-                          </Menu.Item>
-                        </div>
-                        <div className="py-1">
-                          <Menu.Item>
-                            {({ active }) => (
-                              <a
-                                href="#"
-                                className={classNames(
-                                  active
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "text-gray-700",
-                                  "block px-4 py-2 text-sm"
-                                )}
-                              >
-                                Logout
-                              </a>
-                            )}
-                          </Menu.Item>
-                        </div>
-                      </Menu.Items>
-                    </Transition>
-                  </>
-                )}
-              </Menu>
+              <img
+                className="h-8 w-8 rounded-full"
+                src={getIdenticonSrc(address || "")}
+                alt=""
+              />
             </div>
           </div>
         </div>

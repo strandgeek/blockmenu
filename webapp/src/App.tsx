@@ -20,10 +20,10 @@ import { AdminUsers } from "./pages/admin/AdminUsers";
 import { AdminConfig } from "./pages/admin/AdminConfig";
 import { AdminPreview } from "./pages/admin/AdminPreview";
 import { QrCodeGenerator } from "./pages/admin/QrCodeGenerator";
-import { Welcome } from "./pages/app/Welcome";
 import { EthereumClient, w3mConnectors } from "@web3modal/ethereum";
 import { Web3Modal } from "@web3modal/react";
 import { AdminAuth } from "./pages/admin/AdminAuth";
+import { AdminHome } from "./pages/admin/AdminHome";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +33,10 @@ const router = createBrowserRouter([
   {
     path: "/deploy",
     element: <Deploy />,
+  },
+  {
+    path: "/admin",
+    element: <AdminHome />,
   },
   {
     path: "/admin/auth",
@@ -69,10 +73,6 @@ const router = createBrowserRouter([
   {
     path: "/app",
     element: <AppHomePage />,
-  },
-  {
-    path: "/app/welcome",
-    element: <Welcome />,
   },
   {
     path: "/app/start",

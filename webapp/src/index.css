@@ -10,3 +10,9 @@ html {
 html::-webkit-scrollbar {
   display: none;
 }
+
+#preview-wrap { width: 420px; height: 710px; }
+#preview-frame {
+  width: 420px; height: 710px;
+  transform: scale(0.75);
+}

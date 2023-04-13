@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { FC, useState } from "react";
 import { Link } from "react-router-dom";
-import { useStep } from "usehooks-ts";
+import { useSessionStorage, useStep } from "usehooks-ts";
 import blockMenuSrc from "../assets/logo.svg";
 import { ConnectWalletButton } from "../components/ConnectWalletButton";
 import ContractV1 from "../contracts/v1.json";
@@ -20,6 +20,7 @@ export const Deploy: FC<DeployProps> = (props) => {
     "sample"
   );
   const [deployedAddress, setDeployedAddress] = useState("");
+  const [contractAddr, setContractAddr] = useSessionStorage('blockmenu-contract', '');
 
   const deployContract = async () => {
     if (!signer) {
@@ -28,16 +29,19 @@ export const Deploy: FC<DeployProps> = (props) => {
     }
     setLoading(true);
     const factory = new ethers.ContractFactory(ContractV1.abi, ContractV1.bytecode, signer);
-    const deployParams = templateType === 'empty' ? ['', []] : [
-      'bafkreihh4r7zdnnarpw4ehiy4gy5vwgff2uyfpxi6zio74grndbwakqum4',
-      ['0.05', '0.08', '0.09', '0.09', '0.02', '0.04'].map(val => ({ amount: ethers.utils.parseEther(val) })),
-      '',
+    const items = ['70', '90', '180', '120', '25', '40'].map(val => ({ amount: ethers.utils.parseEther(val) }));
+    console.log(items);
+    const deployParams = templateType === 'empty' ? ['', [], ''] : [
+      'bafkreieyl6cnbg4yfb7abyg6pxnp3uly4khsamvlhkui3gpzqa77iaq4iq',
+      items,
+      'bafkreibairlqsggyb3ixghdacamcpvsb64v7pkh6wjfcarg4kv5qpgjbr4',
     ];
     const contract = await factory.deploy(...deployParams);
     // Wait for 1 contract confirmation
     await contract.deployTransaction.wait(1);
     confettiAnimate();
     setDeployedAddress(contract.address);
+    setContractAddr(contract.address);
     helpers.goToNextStep();
     setLoading(false);
   };
@@ -156,7 +160,7 @@ export const Deploy: FC<DeployProps> = (props) => {
             </div>
             <div className="w-full p-4 border-t flex justify-between">
               <Link
-                to={`/admin?contract=${deployedAddress}`}
+                to="/admin"
                 className="btn btn-primary btn-block"
               >
                 Go to BlockMenu Admin

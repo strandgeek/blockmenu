@@ -4,34 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useOrder } from "../hooks/useOrder";
 import { useConfigMetadataInfo } from "../client/queries";
 import { getCidUrl } from "../lib/web3storage";
-import styled from "styled-components";
-
-const CustomStylesWrapper = styled.div<{ primaryColor?: string }>`
-  .menu > li {
-    :where(li:not(.menu-title):not(:empty)) > :where(*:not(ul):active) {
-      background-color: ${(props) => props.primaryColor};
-      color: white;
-      .text-xs {
-        color: rgba(255, 255, 255, 0.8);
-      }
-    }
-  }
-  .tabs-boxed .tab-active:not(.tab-disabled):not([disabled]) {
-    background-color: ${(props) => props.primaryColor};
-  }
-  .btn:disabled {
-    color: rgba(255, 255, 255, 0.5);
-    opacity: 0.5;
-  }
-  .btn-primary {
-    background-color: ${(props) => props.primaryColor};
-    border-color: ${(props) => props.primaryColor};
-  }
-  .badge-primary {
-    background-color: ${(props) => props.primaryColor};
-    border-color: ${(props) => props.primaryColor};
-  }
-`;
+import { CustomStylesWrapper } from "../components/app/CustomStylesWrapper";
 
 export interface AppMainLayoutProps {
   children: React.ReactNode;

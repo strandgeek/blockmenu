@@ -14,12 +14,13 @@ export const WalletProvider: FC<WalletProviderProps> = ({ children }) => {
   const [contractAddr] = useSessionStorage('blockmenu-contract', '');
   const [contract, setContract] = useState<ContractContext | null>(null);
   const { data: signer } = useSigner();
+  const httpProvider = new ethers.providers.JsonRpcProvider('https://pre-rpc.bt.io');
   useEffect(() => {
     if (contractAddr) {
       const contract = new ethers.Contract(
         contractAddr,
         ContractV1.abi,
-        signer || undefined,
+        signer || httpProvider,
       ) as unknown as ContractContext;
       setContract(contract);
     }

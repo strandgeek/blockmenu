@@ -11,13 +11,16 @@ export const AdminPreview: FC<AdminPreviewProps> = (props) => {
           <div className="mockup-phone">
             <div className="camera"></div>
             <div className="display">
-              <div className="artboard artboard-demo phone-4 pt-8">
-                <iframe src="/app"  className="h-full w-full" />
+              <div className="artboard artboard-demo phone-1 pt-8">
+                <div id="preview-wrap">
+                  <iframe id="preview-frame" src="/app"  className="h-full w-full" />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      
     </AdminMainLayout>
   );
 };

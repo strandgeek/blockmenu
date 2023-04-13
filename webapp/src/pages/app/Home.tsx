@@ -18,15 +18,11 @@ export const AppHomePage: FC<AppHomePageProps> = (props) => {
     const { data: metadataInfo } = useMetadataInfo();
     const categories: Category[] = metadataInfo?.metadata?.menu?.categories || [];
     const onMenuItemClick = (item: MenuItem) => {
-      if (!bill) {
-        navigate('/app/start');
-        return;
-      }
       setCurrentViweingItem(item);
     }
     return (
         <AppMainLayout>
-            <ItemView item={currentViewingItem} onClose={() => setCurrentViweingItem(null)} />
+            <ItemView item={currentViewingItem} onClose={() => setCurrentViweingItem(null)} editMode={false} />
             <ul className="menu bg-base-100 w-full p-2 rounded-box">
                 {categories.map((category: Category) => (
                     <>

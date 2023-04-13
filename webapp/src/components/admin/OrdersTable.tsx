@@ -7,6 +7,8 @@ import { RelativeDate } from "../RelativeDate";
 import { OrderinfoResponse } from "../../types/BlockMenuContract";
 import { ethers } from "ethersv5";
 import { OrderDetailsModal } from "./OrderDetailsModal";
+import { ClockIcon, DocumentCheckIcon, QrCodeIcon } from "@heroicons/react/24/outline";
+import { Link } from "react-router-dom";
 
 const OrderRow: FC<{ order: OrderinfoResponse }> = ({ order }) => {
   const [openModal, setOpenModal] = useState(false);
@@ -89,7 +91,7 @@ const OrderRow: FC<{ order: OrderinfoResponse }> = ({ order }) => {
 export interface OrdersTableProps {}
 
 export const OrdersTable: FC<OrdersTableProps> = (props) => {
-  const { data: orders } = useAllOrdersInfos({});
+  const { data: orders, isLoading } = useAllOrdersInfos({});
   if (!orders) {
     return null;
   }
@@ -129,6 +131,20 @@ export const OrdersTable: FC<OrdersTableProps> = (props) => {
               ))}
             </tbody>
           </table>
+          {!isLoading && orders.length === 0 ? (
+            <div className="w-full">
+              <div className="py-24 w-128 mx-auto text-center">
+                <ClockIcon className="mx-auto h-12 w-12 text-gray-400" />
+                <h3 className="mt-2 text-sm font-medium text-gray-900">
+                  No bills created yet
+                </h3>
+                <Link className="btn btn-outline mt-8" to="/admin/qr-code">
+                  <QrCodeIcon className="h-6 w-6 mr-2" />
+                  Share the QR Code
+                </Link>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
