@@ -1,4 +1,5 @@
 import {
+  ClockIcon,
   ReceiptPercentIcon,
   ReceiptRefundIcon,
 } from "@heroicons/react/24/outline";
@@ -24,7 +25,7 @@ export interface AppBillPageProps {}
 
 export const AppBillPage: FC<AppBillPageProps> = (props) => {
   const { data: metadataInfo } = useMetadataInfo();
-  const { data: bill } = useCurrentBill();
+  const { data: bill, isLoading: billIsLoading } = useCurrentBill();
   const { data: billTotal } = useBillTotalAmount({ billId: bill?.id });
   const { data: orders } = useOrdersInfos({ billId: bill?.id });
   const [billPaid, setBillPaid] = useState(false);
@@ -38,9 +39,14 @@ export const AppBillPage: FC<AppBillPageProps> = (props) => {
   const { mutateAsync, isLoading } = usePayBill();
   useEffect(() => {
     if (!isConnected) {
-        navigate('/app/start');
+      navigate("/app/start");
     }
-}, [isConnected]);
+  }, [isConnected]);
+  useEffect(() => {
+    if (!billIsLoading && !bill) {
+      navigate("/app/start");
+    }
+  }, [billIsLoading]);
   const totalWithTips = useMemo(() => {
     if (!billTotal) {
       return 0;
@@ -48,7 +54,7 @@ export const AppBillPage: FC<AppBillPageProps> = (props) => {
     if (!tipPercent) {
       return billTotal;
     }
-    return (billTotal?.mul(tipPercent).div(100)).add(billTotal);
+    return billTotal?.mul(tipPercent).div(100).add(billTotal);
   }, [billTotal, tipPercent]);
   const hasWaiterAssigned =
     bill?.waiter &&
@@ -120,6 +126,20 @@ export const AppBillPage: FC<AppBillPageProps> = (props) => {
                     </table>
                   </div>
                 ))}
+
+                {orders && orders.length === 0 ? (
+                  <div className="w-full">
+                    <div className="py-24 w-128 mx-auto text-center">
+                      <ClockIcon className="mx-auto h-12 w-12 text-gray-400" />
+                      <h3 className="mt-2 text-sm font-medium text-gray-900">
+                        No orders created yet
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-500">
+                        Submit orders to your bill
+                      </p>
+                    </div>
+                  </div>
+                ) : null}
               </div>
             </>
           ) : (
@@ -180,20 +200,16 @@ export const AppBillPage: FC<AppBillPageProps> = (props) => {
             </>
           ) : (
             <>
-            <div className="w-full flex items-center justify-center border-y my-4 py-8 pb-6">
-              <div className="text-green-600 flex items-center text-2xl">
-                <CheckCircleIcon className="h-8 w-8 mr-1" />
-                Bill Paid
+              <div className="w-full flex items-center justify-center border-y my-4 py-8 pb-6">
+                <div className="text-green-600 flex items-center text-2xl">
+                  <CheckCircleIcon className="h-8 w-8 mr-1" />
+                  Bill Paid
+                </div>
               </div>
-            </div>
-            <Link
-                className="btn btn-primary btn-block"
-                to="/app/start"
-              >
+              <Link className="btn btn-primary btn-block" to="/app/start">
                 Create Another Bill
               </Link>
             </>
-
           )}
         </div>
       </div>

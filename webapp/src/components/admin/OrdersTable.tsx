@@ -136,7 +136,7 @@ export const OrdersTable: FC<OrdersTableProps> = (props) => {
               <div className="py-24 w-128 mx-auto text-center">
                 <ClockIcon className="mx-auto h-12 w-12 text-gray-400" />
                 <h3 className="mt-2 text-sm font-medium text-gray-900">
-                  No bills created yet
+                  No orders created yet
                 </h3>
                 <Link className="btn btn-outline mt-8" to="/admin/qr-code">
                   <QrCodeIcon className="h-6 w-6 mr-2" />
