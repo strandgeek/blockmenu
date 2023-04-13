@@ -16,3 +16,16 @@ html::-webkit-scrollbar {
   width: 420px; height: 710px;
   transform: scale(0.75);
 }
+
+.player-wrapper {
+  width: auto;
+  height: auto;
+}
+.react-player {
+  padding-top: 56.25%;
+  position: relative;
+}
+
+.react-player > div {
+  position: absolute;
+}

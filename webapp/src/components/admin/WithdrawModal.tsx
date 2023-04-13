@@ -85,7 +85,7 @@ export const WithdrawModal: FC<WithdrawModalProps> = ({ ...props }) => {
         </div>
         <div className="form-control w-full mt-4">
           <label className="label">
-            <span className="label-text">Amount (BTTC)</span>
+            <span className="label-text">Amount (BTT)</span>
           </label>
           <AmountInput {...register("amount", { required: true })} />
         </div>

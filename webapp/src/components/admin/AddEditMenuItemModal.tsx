@@ -90,7 +90,7 @@ export const AddEditMenuItemModal: FC<AddEditMenuItemModalProps> = (props) => {
       </div>
       <div className="form-control w-full mt-2">
         <label className="label">
-          <span className="label-text">Price (BTTC)</span>
+          <span className="label-text">Price (BTT)</span>
         </label>
         <AmountInput {...register("price", { required: true })} />
       </div>
