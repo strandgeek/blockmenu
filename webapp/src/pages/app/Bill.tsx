@@ -17,7 +17,7 @@ import {
 import { SuccessTick } from "../../components/SuccessTick";
 import { AppMainLayout } from "../../layouts/AppMainLayout";
 import { allItemsToMap } from "../../lib/metadata";
-import { BigNumber } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { Amount } from "../../components/Amount";
 import { useAccount } from "wagmi";
 
@@ -58,7 +58,7 @@ export const AppBillPage: FC<AppBillPageProps> = (props) => {
   }, [billTotal, tipPercent]);
   const hasWaiterAssigned =
     bill?.waiter &&
-    bill.waiter !== "0x0000000000000000000000000000000000000000";
+    bill.waiter !== ethers.constants.AddressZero;
   const onSubmit = async () => {
     if (!bill || !totalWithTips) {
       return;
@@ -155,7 +155,7 @@ export const AppBillPage: FC<AppBillPageProps> = (props) => {
           )}
         </div>
         <div className="p-4 fixed w-full bottom-0 border z-30 bg-white shadow-black shadow-2xl">
-          {hasWaiterAssigned ? (
+          {!isPaid && hasWaiterAssigned ? (
             <div>
               <div>
                 <div className="text-gray-600 mb-4">Select a tip:</div>

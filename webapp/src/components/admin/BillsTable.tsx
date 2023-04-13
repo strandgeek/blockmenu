@@ -20,7 +20,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { AssignYourselfModal } from "./AssignYourselfModal";
 import { Link } from "react-router-dom";
-import QRCode from "react-qr-code";
 
 const BillRow: FC<{ billInfo: BillinfoResponse }> = ({ billInfo }) => {
   const [showAssignModal, setShowAssignModal] = useState(false);

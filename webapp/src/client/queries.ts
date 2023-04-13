@@ -150,6 +150,7 @@ export const useAllBillsInfos = ({ fromDate, toDate, refetchInterval=0 }: { from
         
         const { bill: b } = billInfo;
         return {
+          id: b.id,
           bill: {
             id: b.id,
             owner: b.owner,
