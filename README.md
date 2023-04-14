@@ -1,3 +1,5 @@
+[![Contract Tests](https://github.com/strandgeek/blockmenu/actions/workflows/contract-test.yml/badge.svg)](https://github.com/strandgeek/blockmenu/actions/workflows/contract-test.yml) ![GitHub issues](https://img.shields.io/github/issues/strandgeek/blockmenu) ![GitHub last commit](https://img.shields.io/github/last-commit/strandgeek/blockmenu)
+
 # BlockMenu
 
 ![BlockMenu - Cover](https://user-images.githubusercontent.com/101031495/232161680-cddd0de4-a07b-4d3c-b542-3d8d0b9192e6.png)
