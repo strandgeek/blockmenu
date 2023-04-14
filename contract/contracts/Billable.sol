@@ -3,8 +3,6 @@ pragma solidity >=0.4.22 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "hardhat/console.sol";
-
 import "./MenuManageable.sol";
 
 abstract contract Billable is MenuManageable {
