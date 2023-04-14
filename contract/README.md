@@ -1,13 +1,38 @@
-# Sample Hardhat Project
+# Quickstart Guide for BlockMenu Contract
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+This project builds a smart contract for BlockMenu on BitTorrent-Chain using Hardhat and OpenZeppelin.
 
-Try running some of the following tasks:
+## Prerequisites
 
-```shell
+- Node.js (version 14 or later)
+
+## Installation
+
+1 - Install dependencies:
+
+```sh
+cd contract
+npm install
+```
+
+2 - Compile the smart contract:
+
+```
+npm run compile
+```
+
+> When you compile a code the contract JSON is copied to the webapp so the deployer UI will use the most recent compiled version.
+
+3 - Test the contract:
+
+```
+npm test
+```
+
+Also, you can use the hardhard commands:
+
+```sh
 npx hardhat help
 npx hardhat test
-REPORT_GAS=true npx hardhat test
 npx hardhat node
-npx hardhat run scripts/deploy.ts
 ```
