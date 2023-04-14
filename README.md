@@ -71,7 +71,7 @@ On the admin there are some features to test, you can start by adding some items
 
 Update:
 
-As the project is aiming to be a real-life use case, during the Hackathon, we made a pivot from using TRON to BitTorrent-Chain as the main chain for the dApp. This decision was made with the aim of providing a more affordable and democratic platform for users, given the low fees associated with using BitTorrent-Chain.
+As the project is aiming to be a real-life use case, during the Hackathon, we made a pivot from using TRON to BitTorrent-Chain as the main chain for the dApp. This decision was made with the aim of providing a more affordable platform for users, given the low fees associated with using BitTorrent-Chain.
 
 ------
 
