@@ -9,7 +9,7 @@
 - [🏠 Website](https://www.blockmenu.xyz)
 - [🚀 Deploy a Contract](https://www.blockmenu.xyz/deploy)
 - [⚡️ Admin Login](https://www.blockmenu.xyz/admin/auth)
-- [📖 Documentation](https://www.blockmenu.xyz)
+- [📖 Documentation](https://docs.blockmenu.xyz)
 
 
 -----
