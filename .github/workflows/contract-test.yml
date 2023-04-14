@@ -26,6 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: cd contract
-    - run: npm ci
-    - run: npm test
+        cache-dependency-path: 'contract/package-lock.json'
+    - name: Run tests
+      working-directory: ./contract
+      run: npm ci && npm test
